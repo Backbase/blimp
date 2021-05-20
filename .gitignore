@@ -1,0 +1,12 @@
+.*
+!.git?*
+!.mvn/
+target/
+build/
+bin/
+*.iml
+*.tmp
+*.log
+*.jdbc
+*.launch
+pom.xml.*
