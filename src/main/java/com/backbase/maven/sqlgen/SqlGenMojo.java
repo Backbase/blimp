@@ -73,26 +73,36 @@ public class SqlGenMojo extends AbstractMojo {
     @Parameter(property = "sqlgen.addResource")
     boolean addResource = false;
 
+    @Parameter(property = "sqlgen.addTestResource")
+    boolean addTestResource = false;
+
     @Override
     public void execute() throws MojoExecutionException {
-        if (isExecutable()) {
-            try {
-                generateSQL();
-            } catch (final MojoExecutionException e) {
-                getLog().error(e);
-
-                throw e;
-            }
-
-            if (this.addResource) {
-                final Resource resource = new Resource();
-
-                resource.setDirectory(this.outputDirectory.getPath());
-                resource.setIncludes(asList("**/*.sql"));
-
-                this.project.addResource(resource);
-            }
+        if (!isExecutable()) {
+            return;
         }
+
+        try {
+            generateSQL();
+        } catch (final MojoExecutionException e) {
+            getLog().error(e);
+
+            throw e;
+        }
+
+        if (this.addResource) {
+            this.project.addResource(createResource());
+        } else if (this.addTestResource) {
+            this.project.addTestResource(createResource());
+        }
+    }
+
+    private Resource createResource() {
+        final Resource resource = new Resource();
+
+        resource.setDirectory(this.outputDirectory.getPath());
+        resource.setIncludes(asList("**/*.sql"));
+        return resource;
     }
 
     private boolean isExecutable() {
