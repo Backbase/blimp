@@ -5,6 +5,7 @@ import static java.lang.Thread.currentThread;
 import static java.util.Optional.ofNullable;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,7 +36,8 @@ final class LiquibaseUpdate {
     }
 
     private final String database;
-    private final String changeLogFile;
+    @Builder.Default
+    private final String changeLogFile = "db.changelog-persistence.xml";
     private final Path changeLogCache;
 
     @Builder.Default
@@ -92,11 +94,25 @@ final class LiquibaseUpdate {
                     liquibase.update(contexts, new LabelExpression(), out);
                 }
             } catch (final Exception e) {
+                markFailed();
+
                 throw new MojoExecutionException(this.output.toString(), e);
             }
 
             return null;
         });
+    }
+
+    private void markFailed() {
+        try {
+            final Path failed = this.changeLogCache.getParent()
+                .resolve("failed-" + this.changeLogCache.getFileName());
+
+            Files.deleteIfExists(failed);
+            Files.move(this.changeLogCache, failed);
+        } catch (final IOException e) {
+
+        }
     }
 
     private <T> T withClassLoader(Action<T> action) throws MojoExecutionException {
@@ -129,6 +145,10 @@ final class LiquibaseUpdate {
             if (cl == changeLog) {
                 continue;
             }
+
+            ofNullable(cs.getContexts())
+                .map(ContextExpression::getContexts)
+                .ifPresent(contexts::addAll);
 
             collectContexts(contexts, cl);
         }

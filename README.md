@@ -33,8 +33,10 @@ How it works
                     <outputDirectory>${project.build.directory}/generated-resources/liquibase</outputDirectory>
                     <serviceName>${project.artifactId}</serviceName>
                     <addResource>false</addResource>
-                    <format>zip</format> <!-- it doesn't generate any assembly if not specified -->
-                    <classifier>sql</classifier> <!-- if format is specified -->
+                    <formats>
+                        <format>zip</format>
+                    </format>
+                    <classifier>sql</classifier>
                 </configuration>
             </execution>
         </executions>

@@ -1,5 +1,6 @@
 package com.backbase.maven.sqlgen;
 
+import static java.util.Optional.*;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -29,17 +30,32 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.codehaus.plexus.archiver.Archiver;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.FileSet;
+import org.codehaus.plexus.archiver.manager.ArchiverManager;
+import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
+import org.codehaus.plexus.archiver.util.DefaultFileSet;
 
 @Mojo(name = "generate", requiresProject = true, defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
     requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class SqlGenMojo extends AbstractMojo {
+    private static final String SQL_FILES = "**/*.sql";
+
     @Parameter(property = "project", readonly = true)
     private MavenProject project;
+
+    @Component
+    private ArchiverManager archiverManager;
+    @Component
+    private MavenProjectHelper projectHelper;
 
     @Parameter(property = "sqlgen.skip")
     boolean skip;
@@ -65,10 +81,17 @@ public class SqlGenMojo extends AbstractMojo {
         required = true)
     String serviceName;
 
-    @Parameter(property = "sqlgen.databases",
-        defaultValue = "mysql",
-        required = true)
+    @Parameter(property = "sqlgen.databases", defaultValue = "mysql", required = true)
     List<String> databases = new ArrayList<>();
+
+    @Parameter(property = "sqlgen.formats", defaultValue = "zip")
+    List<String> formats = asList("zip");
+
+    @Parameter(property = "sqlgen.attach")
+    boolean attach = true;
+
+    @Parameter(property = "sqlgen.classifier", defaultValue = "sql")
+    String classifier;
 
     @Parameter(property = "sqlgen.addResource")
     boolean addResource = false;
@@ -95,13 +118,45 @@ public class SqlGenMojo extends AbstractMojo {
         } else if (this.addTestResource) {
             this.project.addTestResource(createResource());
         }
+
+        for (final String format : this.formats) {
+            try {
+                createAssembly(format);
+            } catch (final NoSuchArchiverException | ArchiverException | IOException e) {
+                getLog().error(e);
+
+                throw new MojoExecutionException(format, e);
+            }
+        }
+    }
+
+    private void createAssembly(String format) throws NoSuchArchiverException, ArchiverException, IOException {
+        final String archiveName = this.project.getBuild().getFinalName()
+            + ofNullable(this.classifier).map(c -> "-" + c).orElse("")
+            + "." + format;
+        final File archive = new File(this.project.getBuild().getDirectory(), archiveName);
+        final Archiver archiver = this.archiverManager.getArchiver(archive);
+        final FileSet fileSet = DefaultFileSet
+            .fileSet(this.outputDirectory)
+            .prefixed(this.serviceName + "/")
+            .include(new String[] {SQL_FILES})
+            .includeEmptyDirs(false);
+
+        archiver.setDestFile(archive);
+        archiver.addFileSet(fileSet);
+        archiver.createArchive();
+
+        if (this.attach) {
+            this.projectHelper.attachArtifact(this.project, format, this.classifier, archive);
+        }
     }
 
     private Resource createResource() {
         final Resource resource = new Resource();
 
         resource.setDirectory(this.outputDirectory.getPath());
-        resource.setIncludes(asList("**/*.sql"));
+        resource.setIncludes(asList(SQL_FILES));
+
         return resource;
     }
 
@@ -113,7 +168,8 @@ public class SqlGenMojo extends AbstractMojo {
         }
 
         if (!this.inputDirectory.exists()) {
-            getLog().info("SQL generation is skipped, input directory doesnt exist.");
+            getLog().info(format("SQL generation is skipped, input directory doesnt exist (%s).",
+                this.inputDirectory));
 
             return false;
         }
