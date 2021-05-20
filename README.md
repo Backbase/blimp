@@ -2,7 +2,11 @@
 
 # Description
 
-...
+How it works
+
+- collects all contexts from the changeset, then for each context it generates the upgrade script for that context
+- generaters full create script
+- discussed to fetch the previous version of the artefact and generate only the latest version - I have some concerns here
 
 # Configuration
 
