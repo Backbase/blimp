@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>@project.groupId@.@project.artifactId@</groupId>
+        <artifactId>arrangement-parent</artifactId>
+        <version>@project.version@</version>
+    </parent>
+
+    <artifactId>arrangement-manager</artifactId>
+    <build>
+        <finalName>arrangement-manager</finalName>
+        <plugins>
+            <plugin>
+                <groupId>com.backbase.oss</groupId>
+                <artifactId>blimp-maven-plugin</artifactId>
+                <version>@project.version@</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <databases>
+                                <database>mysql</database>
+                                <database>mssql</database>
+                            </databases>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>@project.groupId@.@project.artifactId@</groupId>
+            <artifactId>arrangement-persistence</artifactId>
+            <version>@project.version@</version>
+        </dependency>
+    </dependencies>
+</project>
