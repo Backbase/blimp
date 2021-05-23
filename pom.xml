@@ -5,15 +5,15 @@
 
     <groupId>com.backbase.oss</groupId>
     <artifactId>blimp</artifactId>
-    <version>0.3.1-SNAPSHOT</version>
+    <version>0.10.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <scm>
         <url>https://github.com/Backbase/blimp</url>
         <connection>https://github.com/Backbase/blimp.git</connection>
         <developerConnection>${developerConnection}</developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <distributionManagement>
         <repository>
@@ -36,8 +36,12 @@
         <itf.jupiter.version>0.10.0</itf.jupiter.version>
         <junit.version>5.7.2</junit.version>
         <liquibase.version>3.10.3</liquibase.version>
-        <maven.libs.version>3.3.9</maven.libs.version>
+        <maven.libs.version>3.6.0</maven.libs.version>
     </properties>
+
+    <prerequisites>
+        <maven>${maven.libs.version}</maven>
+    </prerequisites>
 
     <modules>
         <module>blimp-maven-plugin</module>
@@ -99,12 +103,26 @@
                     <version>2.8.2</version>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>3.0.0-M4</version>
+                </plugin>
+                <plugin>
                     <groupId>com.soebes.itf.jupiter.extension</groupId>
                     <artifactId>itf-maven-plugin</artifactId>
                     <version>0.10.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <configuration>
+                    <tagNameFormat>release-@{project.version}</tagNameFormat>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <dependencyManagement>
