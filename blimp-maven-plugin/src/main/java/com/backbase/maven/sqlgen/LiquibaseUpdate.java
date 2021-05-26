@@ -24,6 +24,7 @@ import liquibase.changelog.ChangeSet;
 import liquibase.changelog.DatabaseChangeLog;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.OfflineConnection;
+import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.FileSystemResourceAccessor;
 import liquibase.resource.ResourceAccessor;
@@ -50,7 +51,7 @@ final class LiquibaseUpdate {
     private final WriterProvider writerProvider;
 
     @Builder.Default
-    private ScriptNamingStrategy strategy = ScriptNamingStrategy.AUTO;
+    private ScriptGroupingStrategy strategy = ScriptGroupingStrategy.AUTO;
 
     private final Path output;
     private final String select;
@@ -70,14 +71,15 @@ final class LiquibaseUpdate {
             .changeLogCache(this.changeLogCache)
             .classLoader(this.classLoader)
             .contexts(this.contexts)
-            .strategy(this.strategy)
+            .database(this.database)
+            .digest(this.digest)
             .labels(this.labels)
             .names(this.names)
-            .digest(this.digest)
+            .strategy(this.strategy)
             .writerProvider(this.writerProvider);
     }
 
-    Set<String> scriptNames() throws MojoExecutionException {
+    Set<String> groups() throws MojoExecutionException {
         if (this.names != null) {
             return this.names;
         }
@@ -90,7 +92,7 @@ final class LiquibaseUpdate {
             final String url = format("offline:%s", this.database);
             final DatabaseConnection conn = new OfflineConnection(url, accessor);
 
-            try (final Liquibase liquibase = new Liquibase(this.changeLogFile, accessor, conn)) {
+            try (final Liquibase liquibase = openLiquibase(conn, accessor)) {
                 visitChanges(liquibase.getDatabaseChangeLog());
             } catch (final Exception e) {
                 throw new MojoExecutionException("script-names", e);
@@ -102,19 +104,19 @@ final class LiquibaseUpdate {
         switch (this.strategy) {
             case AUTO:
                 if (this.contexts.isEmpty()) {
-                    this.strategy = ScriptNamingStrategy.LABEL;
+                    this.strategy = ScriptGroupingStrategy.LABELS;
                     this.names = this.labels;
                 } else {
-                    this.strategy = ScriptNamingStrategy.CONTEXT;
+                    this.strategy = ScriptGroupingStrategy.CONTEXTS;
                     this.names = this.contexts;
                 }
                 break;
 
-            case CONTEXT:
+            case CONTEXTS:
                 this.names = this.contexts;
                 break;
 
-            case LABEL:
+            case LABELS:
                 this.names = this.labels;
                 break;
 
@@ -135,13 +137,13 @@ final class LiquibaseUpdate {
 
         final MessageDigest md = DigestUtils.getMd5Digest();
 
-        scriptNames().forEach(x -> update(md, x));
+        groups().forEach(x -> update(md, x));
 
         withClassLoader(accessor -> {
             final String url = format("offline:%s", this.database);
             final DatabaseConnection conn = new OfflineConnection(url, accessor);
 
-            try (final Liquibase liquibase = new Liquibase(this.changeLogFile, accessor, conn)) {
+            try (final Liquibase liquibase = openLiquibase(conn, accessor)) {
                 updateDigest(md, liquibase.getDatabaseChangeLog());
             } catch (final Exception e) {
                 throw new MojoExecutionException("digest", e);
@@ -165,7 +167,7 @@ final class LiquibaseUpdate {
             final String url = format("offline:%s?changeLogFile=%s", this.database, this.changeLogCache);
             final DatabaseConnection conn = new OfflineConnection(url, accessor);
 
-            try (final Liquibase liquibase = new Liquibase(this.changeLogFile, accessor, conn)) {
+            try (final Liquibase liquibase = openLiquibase(conn, accessor)) {
                 Files.createDirectories(this.output.getParent());
 
                 try (Writer out = this.writerProvider.create(this.output)) {
@@ -179,13 +181,13 @@ final class LiquibaseUpdate {
                         labels = new LabelExpression();
                     } else {
                         switch (this.strategy) {
-                            case CONTEXT:
+                            case CONTEXTS:
                                 contexts = new Contexts(this.select);
                                 labels = new LabelExpression();
 
                                 break;
 
-                            case LABEL:
+                            case LABELS:
                                 contexts = new Contexts();
                                 labels = new LabelExpression(this.select);
 
@@ -206,6 +208,11 @@ final class LiquibaseUpdate {
 
             return null;
         });
+    }
+
+    private Liquibase openLiquibase(final DatabaseConnection conn, ResourceAccessor accessor)
+        throws LiquibaseException {
+        return new Liquibase(this.changeLogFile, accessor, conn);
     }
 
     LiquibaseUpdate renameCache() throws MojoExecutionException {

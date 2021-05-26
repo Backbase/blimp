@@ -6,10 +6,11 @@
     <groupId>@project.groupId@.@project.artifactId@</groupId>
     <artifactId>no-attach</artifactId>
     <version>@project.version@</version>
+
     <packaging>pom</packaging>
 
     <build>
-        <finalName>review-db</finalName>
+        <finalName>no-attach</finalName>
         <plugins>
             <plugin>
                 <groupId>com.backbase.oss</groupId>
@@ -19,11 +20,16 @@
                     <execution>
                         <goals>
                             <goal>generate</goal>
+                            <goal>assemble</goal>
                         </goals>
                         <configuration>
                             <inputDirectory>@project.basedir@/${changelog.location}/product-db</inputDirectory>
                             <changeLogFile>changelog/db.changelog-persistence.xml</changeLogFile>
                             <attach>false</attach>
+                            <formats>
+                                <format>tar</format>
+                                <format>zip</format>
+                            </formats>
                         </configuration>
                     </execution>
                 </executions>

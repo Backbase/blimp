@@ -90,7 +90,13 @@ class SqlGenMojoIT {
 
     @MavenTest
     void noAttach(MavenExecutionResult result) {
-        assertThat(result).isSuccessful().project().hasTarget();
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .hasTarget();
+
+        target.withFile(format("no-attach-sql.zip")).exists().isNotEmpty();
+        target.withFile(format("no-attach-sql.tar")).exists().isNotEmpty();
+        assertThat(installedArchive(result, null, "sql", "tar")).doesNotExist();
         assertThat(installedArchive(result, null, "sql", "zip")).doesNotExist();
     }
 

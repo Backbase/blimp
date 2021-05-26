@@ -39,10 +39,6 @@
         <maven.libs.version>3.6.0</maven.libs.version>
     </properties>
 
-    <prerequisites>
-        <maven>${maven.libs.version}</maven>
-    </prerequisites>
-
     <modules>
         <module>blimp-maven-plugin</module>
     </modules>

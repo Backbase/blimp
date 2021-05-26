@@ -19,6 +19,7 @@
                     <execution>
                         <goals>
                             <goal>generate</goal>
+                            <goal>assemble</goal>
                         </goals>
                         <configuration>
                             <inputDirectory>@project.basedir@/${changelog.location}/product-db</inputDirectory>

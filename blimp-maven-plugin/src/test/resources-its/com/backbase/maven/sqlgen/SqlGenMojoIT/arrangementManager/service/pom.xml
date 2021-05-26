@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>arrangement-manager</artifactId>
+
     <build>
         <finalName>arrangement-manager</finalName>
         <plugins>
@@ -21,6 +22,7 @@
                     <execution>
                         <goals>
                             <goal>generate</goal>
+                            <goal>assemble</goal>
                         </goals>
                         <configuration>
                             <databases>

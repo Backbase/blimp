@@ -3,7 +3,6 @@ package com.backbase.maven.sqlgen;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
-import static java.util.Optional.ofNullable;
 
 import com.backbase.maven.sqlgen.LiquibaseUpdate.LiquibaseUpdateBuilder;
 import java.io.File;
@@ -17,157 +16,142 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 import liquibase.resource.FileSystemResourceAccessor;
 import lombok.SneakyThrows;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Resource;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
-import org.codehaus.plexus.archiver.Archiver;
-import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.FileSet;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
-import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-import org.codehaus.plexus.archiver.util.DefaultFileSet;
 import org.codehaus.plexus.util.Scanner;
-import org.sonatype.plexus.build.incremental.BuildContext;
 
+/**
+ * Generate all SQL scripts for all specified databases.
+ * <p>
+ * This mojo executes the following actions
+ * <ol>
+ * <li>generates the full creation script</li>
+ * <li>collects all groups of changesets</li>
+ * <li>for each group, generates one script containing all changes in that group</li>
+ * </ol>
+ * <br/>
+ * <b>What is a group?</b><br/>
+ * A group is a collection of changesets that are supposed to included in a release they can be
+ * either the labels of the changes or the contexts.
+ * </p>
+ */
 @Mojo(name = "generate", requiresProject = true, defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
     requiresDependencyResolution = ResolutionScope.RUNTIME)
-public class SqlGenMojo extends AbstractMojo {
-    private static final String SQL_FILES = "**/*.sql";
+public class GenerateMojo extends MojoBase {
 
-    @Parameter(property = "project", readonly = true)
-    private MavenProject project;
-
-    @Component
-    private ArchiverManager archiverManager;
-    @Component
-    private MavenProjectHelper projectHelper;
-    @Component
-    private BuildContext buildContext;
-
-    @Parameter(property = "sqlgen.skip")
-    boolean skip;
-
+    /**
+     * The location of the <i>changelog</i> to execute.
+     * <p>
+     * Usually a file name relative to the input directory but it can also point to a classpath
+     * resource.
+     * </p>
+     */
     @Parameter(property = "sqlgen.changeLogFile", defaultValue = "db.changelog-persistence.xml", required = true)
-    String changeLogFile;
+    private String changeLogFile;
 
+    /**
+     * The base directory of the <i>changelog</i> files.
+     */
     @Parameter(property = "sqlgen.inputDirectory",
         defaultValue = "${project.basedir}/src/main/resources",
         required = true)
-    File inputDirectory;
+    private File inputDirectory;
 
+    /**
+     * List of glob patterns specifing the changelog files.
+     * <p>
+     * Not needed by Liquibase, but used by the plugin to avoid unnecessary executions of the goal.
+     * </p>
+     */
     @Parameter(property = "sqlgen.inputPatterns",
         defaultValue = "**/*.sql,**/db.changelog*.xml,**/db.changelog*.yml",
         required = true)
-    String[] inputPatterns;
+    private String[] inputPatterns;
 
+    /**
+     * The destination directory of the generated SQL files.
+     */
     @Parameter(property = "sqlgen.outputDirectory",
         defaultValue = "${project.build.directory}/generated-resources/liquibase",
         required = true)
-    File outputDirectory;
+    private File outputDirectory;
 
-    @Parameter(property = "sqlgen.outputPrefix")
-    String outputPrefix;
+    /**
+     * Specifies how to generate the name of SQL script.
+     * <p>
+     * The following placeholders are available:
+     * <ul>
+     * <li>database: the database type</li>
+     * <li>group: the name of the group for which the goal generates the SQL script.</li>
+     * <li>service: the service name taken from the {@link MojoBase#serviceName}.</li>
+     * </p>
+     * For full creation SQL scripts, the group name is set as {@code create}.
+     */
+    @Parameter(property = "sqlgen.sqlFileNameFormat", defaultValue = "@{database}/@{group}/@{service}.sql")
+    private String sqlFileNameFormat;
 
+    /**
+     * The file encoding used for SQL files.
+     */
     @Parameter(property = "sqlgen.encoding", defaultValue = "UTF-8")
     private String encoding;
 
-    @Parameter(property = "sqlgen.serviceName",
-        defaultValue = "${project.artifactId}",
-        required = true)
-    String serviceName;
-
+    /**
+     * The list of the databases for which to generate the SQL scripts.
+     */
     @Parameter(property = "sqlgen.databases", defaultValue = "mysql", required = true)
-    List<String> databases = new ArrayList<>();
+    private List<String> databases;
 
-    @Parameter(property = "sqlgen.formats", defaultValue = "zip")
-    List<String> formats = asList("zip");
+    /**
+     * Whether to add the SQL scripts as a resource of the project.
+     */
+    @Parameter(property = "sqlgen.addResource", defaultValue = "false")
+    private boolean addResource;
 
-    @Parameter(property = "sqlgen.attach")
-    boolean attach = true;
+    /**
+     * Whether to add the SQL scripts as a resource of the project.
+     */
+    @Parameter(property = "sqlgen.addTestResource", defaultValue = "false")
+    private boolean addTestResource;
 
-    @Parameter(property = "sqlgen.classifier", defaultValue = "sql")
-    String classifier;
-
-    @Parameter(property = "sqlgen.addResource")
-    boolean addResource = false;
-
-    @Parameter(property = "sqlgen.addTestResource")
-    boolean addTestResource = false;
-
-    @Parameter(property = "sqlgen.namingStrategy", defaultValue = "AUTO")
-    ScriptNamingStrategy namingStrategy;
+    /**
+     * Controls how to group the changesets to generate one SQL script for a given context or label.
+     * <p>
+     * The following options are available
+     * <ul>
+     * <li><b>CONTEXTS</b>: use the changeset context to group changes.
+     * <li><b>LABELS</b>: use the changeset label to group changes.
+     * <li><b>AUTO</b>: tries to identify if the changes use contexts or labels; if both are present,
+     * then contexts is preferred.
+     * </ul>
+     * Note that when a context or label contains multiple values, only the first one is considered.
+     * </p>
+     */
+    @Parameter(property = "sqlgen.groupingStrategy", defaultValue = "AUTO")
+    private ScriptGroupingStrategy groupingStrategy;
 
     @Override
-    public void execute() throws MojoExecutionException {
-        try {
-            final LiquibaseUpdate update = evaluateChanges();
+    protected void doExecute() throws MojoExecutionException, MojoFailureException {
+        final LiquibaseUpdate update = evaluateChanges();
 
-            if (update == null) {
-                return;
-            }
-
-            generateSQL(update);
-        } catch (final MojoExecutionException e) {
-            getLog().error(e);
-
-            throw e;
+        if (update == null) {
+            return;
         }
 
-        this.buildContext.refresh(this.outputDirectory);
-
-        for (final String format : this.formats) {
-            try {
-                createAssembly(format);
-            } catch (final NoSuchArchiverException | ArchiverException | IOException e) {
-                getLog().error(e);
-
-                throw new MojoExecutionException(format, e);
-            }
-        }
-    }
-
-    private void createAssembly(String format) throws NoSuchArchiverException, ArchiverException, IOException {
-        final String archiveName = this.project.getBuild().getFinalName()
-            + ofNullable(this.classifier).map(c -> "-" + c).orElse("")
-            + "." + format;
-        final File archive = new File(this.project.getBuild().getDirectory(), archiveName);
-        final Archiver archiver = this.archiverManager.getArchiver(archive);
-        final FileSet fileSet = DefaultFileSet
-            .fileSet(this.outputDirectory)
-            .prefixed(this.serviceName + "/")
-            .include(new String[] {SQL_FILES})
-            .includeEmptyDirs(false);
-
-        archiver.setDestFile(archive);
-        archiver.addFileSet(fileSet);
-        archiver.createArchive();
-
-        if (this.attach) {
-            this.projectHelper.attachArtifact(this.project, format, this.classifier, archive);
-        }
-
-        this.buildContext.refresh(archive);
+        generateSQL(update);
     }
 
     private LiquibaseUpdate evaluateChanges() throws MojoExecutionException {
-        if (this.skip) {
-            getLog().info("SQL generation is skipped.");
-
-            return null;
-        }
         if (this.databases.isEmpty()) {
             getLog().info("SQL generation skipped, no database specified.");
 
@@ -176,7 +160,7 @@ public class SqlGenMojo extends AbstractMojo {
 
         final LiquibaseUpdateBuilder builder = LiquibaseUpdate.builder()
             .changeLogFile(this.changeLogFile)
-            .strategy(this.namingStrategy)
+            .strategy(this.groupingStrategy)
             .writerProvider(this::createWriter);
 
         final String[] inputs;
@@ -199,9 +183,9 @@ public class SqlGenMojo extends AbstractMojo {
             builder.classLoader(classLoader());
         }
 
-        final LiquibaseUpdate update = builder.strategy(this.namingStrategy).build();
+        final LiquibaseUpdate update = builder.strategy(this.groupingStrategy).build();
 
-        if (update.scriptNames().isEmpty()) {
+        if (update.groups().isEmpty()) {
             getLog().info("SQL generation skipped, no change found");
 
             return null;
@@ -219,39 +203,40 @@ public class SqlGenMojo extends AbstractMojo {
     private void generateSQL(LiquibaseUpdate changes) throws MojoExecutionException {
         for (final String database : this.databases) {
             final LiquibaseUpdate create = changes.newBuilder().database(database).build();
-            final File marker = new File(this.outputDirectory, "." + create.digest());
+            final File marker = new File(this.outputDirectory, database + "." + create.digest());
             final File createCSV = changeLogCSV(database, "create");
 
             if (this.buildContext.isUptodate(createCSV, marker)) {
                 continue;
             }
 
+            try {
+                Files.createDirectories(marker.toPath().getParent());
+                Files.write(marker.toPath(), new byte[0]);
+            } catch (final IOException e) {
+                throw new MojoExecutionException(database, e);
+            }
+
             create.newBuilder()
                 .changeLogCache(createCSV.toPath())
-                .output(constructOUT(database, "create"))
+                .output(sqlFileName(database, "create"))
                 .build()
                 .renameCache()
                 .generateSQL();
 
             final File updateCSV = changeLogCSV(database, "update");
 
-            final LiquibaseUpdate update = changes.newBuilder()
+            final LiquibaseUpdate update = create.newBuilder()
                 .changeLogCache(updateCSV.toPath())
                 .build()
                 .renameCache();
 
-            for (final String name : create.scriptNames()) {
+            for (final String name : create.groups()) {
                 update.newBuilder()
                     .select(name)
-                    .output(constructOUT(database, name))
+                    .output(sqlFileName(database, name))
                     .build()
                     .generateSQL();
-            }
-
-            try {
-                Files.write(marker.toPath(), new byte[0]);
-            } catch (final IOException e) {
-                throw new MojoExecutionException(database, e);
             }
         }
     }
@@ -290,14 +275,14 @@ public class SqlGenMojo extends AbstractMojo {
         return Files.getLastModifiedTime(path);
     }
 
-    private Path constructOUT(String database, String context) {
-        return Paths.get(this.outputDirectory.getPath(),
-            Stream.of(this.outputPrefix, database, context, this.serviceName + ".sql")
-                .filter(s -> s != null)
-                .map(String::trim)
-                .filter(s -> s.length() > 0)
-                .map(s -> s.replace('/', File.separatorChar))
-                .toArray(String[]::new));
+    private Path sqlFileName(String database, String context) {
+        final String sqlFile = this.sqlFileNameFormat
+            .replace("@{group}", context)
+            .replace("@{database}", database)
+            .replace("@{service}", this.serviceName)
+            .replace('/', File.separatorChar);
+
+        return Paths.get(this.outputDirectory.getPath(), sqlFile);
     }
 
     private Writer createWriter(Path path) throws IOException {

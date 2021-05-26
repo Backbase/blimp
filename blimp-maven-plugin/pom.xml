@@ -12,6 +12,10 @@
     <artifactId>blimp-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
+    <prerequisites>
+        <maven>${maven.libs.version}</maven>
+    </prerequisites>
+
     <build>
         <testResources>
             <testResource>
@@ -27,6 +31,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <configuration>
+                    <goalPrefix>sqlgen</goalPrefix>
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
                 </configuration>
                 <executions>

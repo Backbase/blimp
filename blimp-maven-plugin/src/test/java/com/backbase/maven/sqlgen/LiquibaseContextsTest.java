@@ -14,8 +14,8 @@ class LiquibaseContextsTest {
             .accessor(new FileSystemResourceAccessor("src/test/resources/arrangement-manager"))
             .build();
 
-        assertThat(liquibase.scriptNames()).hasSize(7);
-        assertThat(liquibase.newBuilder().build().scriptNames()).hasSize(7);
+        assertThat(liquibase.groups()).hasSize(7);
+        assertThat(liquibase.newBuilder().build().groups()).hasSize(7);
         assertThat(liquibase.digest()).isNotEmpty();
     }
 
@@ -26,8 +26,8 @@ class LiquibaseContextsTest {
             .changeLogFile("changelog/db.changelog-persistence.xml")
             .build();
 
-        assertThat(liquibase.scriptNames()).hasSize(3);
-        assertThat(liquibase.newBuilder().build().scriptNames()).hasSize(3);
+        assertThat(liquibase.groups()).hasSize(3);
+        assertThat(liquibase.newBuilder().build().groups()).hasSize(3);
         assertThat(liquibase.digest()).isNotEmpty();
     }
 
@@ -38,8 +38,8 @@ class LiquibaseContextsTest {
             .changeLogFile("changelog/db.changelog-persistence.xml")
             .build();
 
-        assertThat(liquibase.scriptNames()).hasSize(3);
-        assertThat(liquibase.newBuilder().build().scriptNames()).hasSize(3);
+        assertThat(liquibase.groups()).hasSize(3);
+        assertThat(liquibase.newBuilder().build().groups()).hasSize(3);
         assertThat(liquibase.digest()).isNotEmpty();
     }
 

@@ -19,11 +19,13 @@
                     <execution>
                         <goals>
                             <goal>generate</goal>
+                            <goal>assemble</goal>
                         </goals>
                         <configuration>
                             <inputDirectory>@project.basedir@/${changelog.location}/review-db</inputDirectory>
                             <changeLogFile>changelog/db.changelog-persistence.xml</changeLogFile>
                             <formats>
+                                <format>zip</format>
                                 <format>tar</format>
                             </formats>
                         </configuration>
