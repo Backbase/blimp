@@ -1,10 +1,10 @@
-package com.backbase.maven.sqlgen;
+package com.backbase.oss.blimp;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 
-import com.backbase.maven.sqlgen.LiquibaseUpdate.LiquibaseUpdateBuilder;
+import com.backbase.oss.blimp.LiquibaseUpdate.LiquibaseUpdateBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -56,13 +56,13 @@ public class GenerateMojo extends MojoBase {
      * resource.
      * </p>
      */
-    @Parameter(property = "sqlgen.changeLogFile", defaultValue = "db.changelog-persistence.xml", required = true)
+    @Parameter(property = "blimp.changeLogFile", defaultValue = "db.changelog-persistence.xml", required = true)
     private String changeLogFile;
 
     /**
      * The base directory of the <i>changelog</i> files.
      */
-    @Parameter(property = "sqlgen.inputDirectory",
+    @Parameter(property = "blimp.inputDirectory",
         defaultValue = "${project.basedir}/src/main/resources",
         required = true)
     private File inputDirectory;
@@ -73,7 +73,7 @@ public class GenerateMojo extends MojoBase {
      * Not needed by Liquibase, but used by the plugin to avoid unnecessary executions of the goal.
      * </p>
      */
-    @Parameter(property = "sqlgen.inputPatterns",
+    @Parameter(property = "blimp.inputPatterns",
         defaultValue = "**/*.sql,**/db.changelog*.xml,**/db.changelog*.yml",
         required = true)
     private String[] inputPatterns;
@@ -81,7 +81,7 @@ public class GenerateMojo extends MojoBase {
     /**
      * The destination directory of the generated SQL files.
      */
-    @Parameter(property = "sqlgen.outputDirectory",
+    @Parameter(property = "blimp.outputDirectory",
         defaultValue = "${project.build.directory}/generated-resources/liquibase",
         required = true)
     private File outputDirectory;
@@ -97,31 +97,31 @@ public class GenerateMojo extends MojoBase {
      * </p>
      * For full creation SQL scripts, the group name is set as {@code create}.
      */
-    @Parameter(property = "sqlgen.sqlFileNameFormat", defaultValue = "@{database}/@{group}/@{service}.sql")
+    @Parameter(property = "blimp.sqlFileNameFormat", defaultValue = "@{database}/@{group}/@{service}.sql")
     private String sqlFileNameFormat;
 
     /**
      * The file encoding used for SQL files.
      */
-    @Parameter(property = "sqlgen.encoding", defaultValue = "UTF-8")
+    @Parameter(property = "blimp.encoding", defaultValue = "UTF-8")
     private String encoding;
 
     /**
      * The list of the databases for which to generate the SQL scripts.
      */
-    @Parameter(property = "sqlgen.databases", defaultValue = "mysql", required = true)
+    @Parameter(property = "blimp.databases", defaultValue = "mysql", required = true)
     private List<String> databases;
 
     /**
      * Whether to add the SQL scripts as a resource of the project.
      */
-    @Parameter(property = "sqlgen.addResource", defaultValue = "false")
+    @Parameter(property = "blimp.addResource", defaultValue = "false")
     private boolean addResource;
 
     /**
      * Whether to add the SQL scripts as a resource of the project.
      */
-    @Parameter(property = "sqlgen.addTestResource", defaultValue = "false")
+    @Parameter(property = "blimp.addTestResource", defaultValue = "false")
     private boolean addTestResource;
 
     /**
@@ -137,7 +137,7 @@ public class GenerateMojo extends MojoBase {
      * Note that when a context or label contains multiple values, only the first one is considered.
      * </p>
      */
-    @Parameter(property = "sqlgen.groupingStrategy", defaultValue = "AUTO")
+    @Parameter(property = "blimp.groupingStrategy", defaultValue = "AUTO")
     private ScriptGroupingStrategy groupingStrategy;
 
     @Override

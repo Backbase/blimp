@@ -1,7 +1,8 @@
-package com.backbase.maven.sqlgen;
+package com.backbase.oss.blimp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.backbase.oss.blimp.LiquibaseUpdate;
 import liquibase.resource.FileSystemResourceAccessor;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.junit.jupiter.api.Test;

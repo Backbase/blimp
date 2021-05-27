@@ -1,4 +1,4 @@
-package com.backbase.maven.sqlgen;
+package com.backbase.oss.blimp;
 
 import static java.util.Optional.ofNullable;
 
@@ -41,19 +41,19 @@ public class AssembleMojo extends MojoBase {
      * <li><b>tar.bz2</b> creates a Bzip2 TAR file format</li>
      * </p>
      */
-    @Parameter(property = "sqlgen.formats", defaultValue = "zip")
+    @Parameter(property = "blimp.formats", defaultValue = "zip")
     private List<String> formats;
 
     /**
      * The classifier of the archive artifact.
      */
-    @Parameter(property = "sqlgen.classifier", defaultValue = "sql")
+    @Parameter(property = "blimp.classifier", defaultValue = "sql")
     private String classifier;
 
     /**
      * Whether to attach the produced archives as artifacts.
      */
-    @Parameter(property = "sqlgen.attach", defaultValue = "true")
+    @Parameter(property = "blimp.attach", defaultValue = "true")
     private boolean attach;
 
     @Override

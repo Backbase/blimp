@@ -1,4 +1,4 @@
-package com.backbase.maven.sqlgen;
+package com.backbase.oss.blimp;
 
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;

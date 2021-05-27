@@ -1,4 +1,4 @@
-package com.backbase.maven.sqlgen;
+package com.backbase.oss.blimp;
 
 import java.io.IOException;
 import java.io.Writer;

@@ -1,6 +1,14 @@
-# SQL generator
+# Backbase Liquibase Integration Maven Plugin
 
-## sqlgen:assemble
+           _..--=--..._
+        .-'            '-.  .-.
+       /.'              '.\/  /
+      |=-                -=| (
+       \'.              .'/\  \
+        '-.,_____ _____.-'  '-'
+             [_____]=8
+
+## blimp:assemble
 
 Generate an archive containing the generated SQL files.
 
@@ -8,11 +16,11 @@ Available parameters:
 
     attach (Default: true)
       Whether to attach the produced archives as artifacts.
-      User property: sqlgen.attach
+      User property: blimp.attach
 
     classifier (Default: sql)
       The classifier of the archive artifact.
-      User property: sqlgen.classifier
+      User property: blimp.classifier
 
     formats (Default: zip)
       Specifies the formats of the archive.
@@ -27,24 +35,24 @@ Available parameters:
       - tar.gz creates a Gzip TAR file format
       - tar.xz creates a Xz TAR file format
       - tar.bz2 creates a Bzip2 TAR file format
-      User property: sqlgen.formats
+      User property: blimp.formats
 
     outputDirectory (Default:
     ${project.build.directory}/generated-resources/liquibase)
       Location of the output directory.
       Required: Yes
-      User property: sqlgen.outputDirectory
+      User property: blimp.outputDirectory
 
     serviceName (Default: ${project.artifactId})
       The name of the service.
       Required: Yes
-      User property: sqlgen.serviceName
+      User property: blimp.serviceName
 
     skip
       Skip the execution.
-      User property: sqlgen.skip
+      User property: blimp.skip
 
-## sqlgen:generate
+## blimp:generate
 
 Generate all SQL scripts for all specified databases.
 
@@ -62,27 +70,27 @@ Available parameters:
 
     addResource
       Whether to add the SQL scripts as a resource of the project.
-      User property: sqlgen.addResource
+      User property: blimp.addResource
 
     addTestResource
       Whether to add the SQL scripts as a resource of the project.
-      User property: sqlgen.addTestResource
+      User property: blimp.addTestResource
 
     changeLogFile (Default: db.changelog-persistence.xml)
       The location of the changelog to execute.
       Usually a file name relative to the input directory but it can also point
       to a classpath resource.
       Required: Yes
-      User property: sqlgen.changeLogFile
+      User property: blimp.changeLogFile
 
     databases (Default: mysql)
       The list of the databases for which to generate the SQL scripts.
       Required: Yes
-      User property: sqlgen.databases
+      User property: blimp.databases
 
     encoding (Default: UTF-8)
       The file encoding used for SQL files.
-      User property: sqlgen.encoding
+      User property: blimp.encoding
 
     groupingStrategy (Default: AUTO)
       Controls how to group the changesets to generate one SQL script for a
@@ -95,34 +103,34 @@ Available parameters:
         are present, then contexts is preferred.
       Note that when a context or label contains multiple values, only the first
       one is considered.
-      User property: sqlgen.groupingStrategy
+      User property: blimp.groupingStrategy
 
     inputDirectory (Default: ${project.basedir}/src/main/resources)
       The base directory of the changelog files.
       Required: Yes
-      User property: sqlgen.inputDirectory
+      User property: blimp.inputDirectory
 
     inputPatterns (Default: **/*.sql,**/db.changelog*.xml,**/db.changelog*.yml)
       List of glob patterns specifing the changelog files.
       Not needed by Liquibase, but used by the plugin to avoid unnecessary
       executions of the goal.
       Required: Yes
-      User property: sqlgen.inputPatterns
+      User property: blimp.inputPatterns
 
     outputDirectory (Default:
     ${project.build.directory}/generated-resources/liquibase)
       The destination directory of the generated SQL files.
       Required: Yes
-      User property: sqlgen.outputDirectory
+      User property: blimp.outputDirectory
 
     serviceName (Default: ${project.artifactId})
       The name of the service.
       Required: Yes
-      User property: sqlgen.serviceName
+      User property: blimp.serviceName
 
     skip
       Skip the execution.
-      User property: sqlgen.skip
+      User property: blimp.skip
 
     sqlFileNameFormat (Default: @{database}/@{group}/@{service}.sql)
       Specifies how to generate the name of SQL script.
@@ -133,13 +141,13 @@ Available parameters:
         script.
       - service: the service name taken from the MojoBase.serviceName.
       - For full creation SQL scripts, the group is set as create.
-      User property: sqlgen.sqlFileNameFormat
+      User property: blimp.sqlFileNameFormat
 
-## sqlgen:help
+## blimp:help
 
-Display help information on blimp-maven-plugin.
+Display help information on backbase-blimp-plugin.
 
-Call mvn sqlgen:help -Ddetail=true -Dgoal=<goal-name> to display parameter details.
+Call mvn blimp:help -Ddetail=true -Dgoal=<goal-name> to display parameter details.
 
 ### Available parameters
 

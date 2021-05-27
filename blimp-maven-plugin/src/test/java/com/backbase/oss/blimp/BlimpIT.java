@@ -1,4 +1,4 @@
-package com.backbase.maven.sqlgen;
+package com.backbase.oss.blimp;
 
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 import static java.lang.String.format;
@@ -24,7 +24,7 @@ import org.apache.maven.model.Model;
 @MavenOption("-s")
 @MavenOption("settings.xml")
 @MavenRepository
-class SqlGenMojoIT {
+class BlimpIT {
     @MavenTest
     void arrangementManager(MavenExecutionResult result) {
         final MavenProjectResultAssert target = assertThat(result).isSuccessful()

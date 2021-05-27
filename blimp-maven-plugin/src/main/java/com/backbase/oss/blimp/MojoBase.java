@@ -1,4 +1,4 @@
-package com.backbase.maven.sqlgen;
+package com.backbase.oss.blimp;
 
 import java.io.File;
 import org.apache.maven.plugin.AbstractMojo;
@@ -25,13 +25,13 @@ public abstract class MojoBase extends AbstractMojo {
     /**
      * Skip the execution.
      */
-    @Parameter(property = "sqlgen.skip")
+    @Parameter(property = "blimp.skip")
     private boolean skip;
 
     /**
      * Location of the output directory.
      */
-    @Parameter(property = "sqlgen.outputDirectory",
+    @Parameter(property = "blimp.outputDirectory",
         defaultValue = "${project.build.directory}/generated-resources/liquibase",
         required = true)
     protected File outputDirectory;
@@ -39,7 +39,7 @@ public abstract class MojoBase extends AbstractMojo {
     /**
      * The name of the service.
      */
-    @Parameter(property = "sqlgen.serviceName",
+    @Parameter(property = "blimp.serviceName",
         defaultValue = "${project.artifactId}",
         required = true)
     protected String serviceName;

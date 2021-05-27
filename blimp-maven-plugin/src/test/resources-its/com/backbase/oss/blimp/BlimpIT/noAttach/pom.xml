@@ -4,16 +4,17 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>@project.groupId@.@project.artifactId@</groupId>
-    <artifactId>product-db</artifactId>
+    <artifactId>no-attach</artifactId>
     <version>@project.version@</version>
+
     <packaging>pom</packaging>
 
     <build>
-        <finalName>product-db</finalName>
+        <finalName>no-attach</finalName>
         <plugins>
             <plugin>
-                <groupId>com.backbase.oss</groupId>
-                <artifactId>blimp-maven-plugin</artifactId>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>@project.artifactId@</artifactId>
                 <version>@project.version@</version>
                 <executions>
                     <execution>
@@ -24,7 +25,11 @@
                         <configuration>
                             <inputDirectory>@project.basedir@/${changelog.location}/product-db</inputDirectory>
                             <changeLogFile>changelog/db.changelog-persistence.xml</changeLogFile>
-                            <classifier>scripts</classifier>
+                            <attach>false</attach>
+                            <formats>
+                                <format>tar</format>
+                                <format>zip</format>
+                            </formats>
                         </configuration>
                     </execution>
                 </executions>
