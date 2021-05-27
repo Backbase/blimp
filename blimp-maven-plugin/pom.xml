@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.backbase.oss</groupId>
         <artifactId>blimp</artifactId>
-        <version>0.11.2-SNAPSHOT</version>
+        <version>0.11.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>blimp-maven-plugin</artifactId>
@@ -155,4 +155,34 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>blimp-internal-test</id>
+            <properties>
+                <liquibase-lint-extension.version>13.0.0</liquibase-lint-extension.version>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <systemProperties>
+                                <blimp-internal-test>true</blimp-internal-test>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>com.backbase.buildingblocks</groupId>
+                    <artifactId>liquibase-lint-extension</artifactId>
+                    <version>${liquibase-lint-extension.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
 </project>

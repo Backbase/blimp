@@ -18,6 +18,8 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.FileTime;
 import java.util.List;
 import java.util.stream.Stream;
+import liquibase.configuration.LiquibaseConfiguration;
+import liquibase.configuration.SystemPropertyProvider;
 import liquibase.resource.FileSystemResourceAccessor;
 import lombok.SneakyThrows;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -125,6 +127,12 @@ public class GenerateMojo extends MojoBase {
     private boolean addTestResource;
 
     /**
+     * Specifies a map of properties you want to pass to Liquibase.
+     */
+    @Parameter(property = "blimp.properties")
+    private MavenPropertiesProvider properties;
+
+    /**
      * Controls how to group the changesets to generate one SQL script for a given context or label.
      * <p>
      * The following options are available
@@ -148,6 +156,7 @@ public class GenerateMojo extends MojoBase {
             return;
         }
 
+        processSystemProperties();
         generateSQL(update);
     }
 
@@ -198,6 +207,12 @@ public class GenerateMojo extends MojoBase {
         }
 
         return update;
+    }
+
+    private void processSystemProperties() {
+        if (this.properties != null) {
+            LiquibaseConfiguration.getInstance().init(new SystemPropertyProvider(), this.properties);
+        }
     }
 
     private void generateSQL(LiquibaseUpdate changes) throws MojoExecutionException {

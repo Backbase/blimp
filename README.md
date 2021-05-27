@@ -43,6 +43,10 @@ Available parameters:
       Required: Yes
       User property: blimp.outputDirectory
 
+    properties
+    Specifies a map of properties you want to pass to Liquibase.
+    User property: blimp.properties
+
     serviceName (Default: ${project.artifactId})
       The name of the service.
       Required: Yes
@@ -218,7 +222,7 @@ The following is a complete configuration example showing the default values.
         </executions>
     </plugin>
 
-A shorter and more concise example:
+A more concise example:
 
     <plugin>
         <groupId>com.backbase.oss</groupId>

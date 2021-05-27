@@ -1,8 +1,8 @@
 package com.backbase.oss.blimp;
 
+import static com.backbase.oss.blimp.TestUtils.installedArchive;
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 import static java.lang.String.format;
-import static java.util.Optional.ofNullable;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.soebes.itf.extension.assertj.MavenProjectResultAssert;
@@ -13,9 +13,6 @@ import com.soebes.itf.jupiter.extension.MavenRepository;
 import com.soebes.itf.jupiter.extension.MavenTest;
 import com.soebes.itf.jupiter.extension.SystemProperty;
 import com.soebes.itf.jupiter.maven.MavenExecutionResult;
-import com.soebes.itf.jupiter.maven.MavenProjectResult;
-import java.io.File;
-import org.apache.maven.model.Model;
 
 @MavenJupiterExtension
 @SystemProperty(value = "changelog.location", content = "src/test/resources")
@@ -98,17 +95,5 @@ class BlimpIT {
         target.withFile(format("no-attach-sql.tar")).exists().isNotEmpty();
         assertThat(installedArchive(result, null, "sql", "tar")).doesNotExist();
         assertThat(installedArchive(result, null, "sql", "zip")).doesNotExist();
-    }
-
-    private File installedArchive(MavenExecutionResult result, String artifactId, String classifier, String format) {
-        final MavenProjectResult project = result.getMavenProjectResult();
-        final Model model = project.getModel();
-        final File cache = project.getTargetCacheDirectory();
-        final File installed = new File(cache, format("%1$s/%2$s/%3$s/%2$s-%3$s-%4$s.%5$s",
-            model.getGroupId().replace('.', File.separatorChar),
-            ofNullable(artifactId).orElse(model.getArtifactId()), model.getVersion(),
-            classifier, format));
-
-        return installed;
     }
 }
