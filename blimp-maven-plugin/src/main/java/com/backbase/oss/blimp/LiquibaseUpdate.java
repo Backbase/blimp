@@ -95,7 +95,7 @@ final class LiquibaseUpdate {
             try (final Liquibase liquibase = openLiquibase(conn, accessor)) {
                 visitChanges(liquibase.getDatabaseChangeLog());
             } catch (final Exception e) {
-                throw new MojoExecutionException("script-names", e);
+                throw new MojoExecutionException("Cannot collect groups", e);
             }
 
             return null;

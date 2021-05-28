@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>@project.groupId@.@project.artifactId@</groupId>
+    <artifactId>no-update-script</artifactId>
+    <version>@project.version@</version>
+    <packaging>pom</packaging>
+
+    <build>
+        <finalName>no-update-script</finalName>
+        <plugins>
+            <plugin>
+                <groupId>@project.groupId@</groupId>
+                <artifactId>@project.artifactId@</artifactId>
+                <version>@project.version@</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate</goal>
+                            <goal>assemble</goal>
+                        </goals>
+                        <configuration>
+                            <inputDirectory>@project.basedir@/${changelog.location}/no-update</inputDirectory>
+                            <changeLogFile>changelog/db.changelog-persistence.xml</changeLogFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

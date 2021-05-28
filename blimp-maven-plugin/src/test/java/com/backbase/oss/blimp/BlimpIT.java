@@ -86,6 +86,38 @@ class BlimpIT {
     }
 
     @MavenTest
+    void noUpdateScript(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .hasTarget();
+
+        target.withFile("no-update-script-sql.zip")
+            .exists().isNotEmpty();
+        target.withFile("generated-resources/liquibase/mysql/create/no-update-script.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-resources/liquibase/mysql/initial_2021.07/no-update-script.sql")
+            .doesNotExist();
+
+        assertThat(installedArchive(result, null, "sql", "zip")).exists().isNotEmpty();
+    }
+
+    @MavenTest
+    void forceUpdateScript(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .hasTarget();
+
+        target.withFile("force-update-script-sql.zip")
+            .exists().isNotEmpty();
+        target.withFile("generated-resources/liquibase/mysql/create/force-update-script.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-resources/liquibase/mysql/initial_2021.07/force-update-script.sql")
+            .exists().isNotEmpty();
+
+        assertThat(installedArchive(result, null, "sql", "zip")).exists().isNotEmpty();
+    }
+
+    @MavenTest
     void noAttach(MavenExecutionResult result) {
         final MavenProjectResultAssert target = assertThat(result).isSuccessful()
             .project()
