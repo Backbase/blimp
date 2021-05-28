@@ -41,12 +41,11 @@ import org.codehaus.plexus.util.Scanner;
  * <li>collects all groups of changesets</li>
  * <li>for each group, generates one script containing all changes in that group</li>
  * </ol>
- * <br/>
- * <b>What is a group?</b><br/>
+ * <br>
+ * <b>What is a group?</b><br>
  * A group is a collection of changesets that are supposed to included in a release; they can be
  * either the labels of the changes or the contexts depending on the {@link #groupingStrategy}
  * configuration.
- * </p>
  */
 @Mojo(name = "generate", requiresProject = true, defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
     requiresDependencyResolution = ResolutionScope.RUNTIME)
