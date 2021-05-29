@@ -2,6 +2,8 @@ package com.backbase.oss.blimp;
 
 import static com.backbase.oss.blimp.TestUtils.installedArchive;
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
+import static com.soebes.itf.jupiter.extension.MavenCLIOptions.BATCH_MODE;
+import static com.soebes.itf.jupiter.extension.MavenCLIOptions.*;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -13,12 +15,15 @@ import com.soebes.itf.jupiter.extension.MavenRepository;
 import com.soebes.itf.jupiter.extension.MavenTest;
 import com.soebes.itf.jupiter.extension.SystemProperty;
 import com.soebes.itf.jupiter.maven.MavenExecutionResult;
+import java.nio.charset.StandardCharsets;
+import org.assertj.core.util.Files;
 
 @MavenJupiterExtension
 @SystemProperty(value = "changelog.location", content = "src/test/resources")
-@MavenGoal("install")
-@MavenOption("-B")
-@MavenOption("-s")
+@MavenGoal({"clean", "install"})
+@MavenOption(BATCH_MODE)
+@MavenOption(FAIL_AT_END)
+@MavenOption(SETTINGS)
 @MavenOption("settings.xml")
 @MavenRepository
 class BlimpIT {
@@ -115,6 +120,45 @@ class BlimpIT {
             .exists().isNotEmpty();
 
         assertThat(installedArchive(result, null, "sql", "zip")).exists().isNotEmpty();
+    }
+
+    @MavenTest
+    void formatted(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .hasTarget();
+
+        target.withFile("generated-resources/liquibase/mysql/create/formatted.sql")
+            .satisfies(file -> {
+                assertThat(Files.contentOf(file, StandardCharsets.UTF_8))
+                    .contains("\nCREATE TABLE product (\n ");
+            });
+    }
+
+    @MavenTest
+    void unformatted(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .hasTarget();
+
+        target.withFile("generated-resources/liquibase/mysql/create/unformatted.sql")
+            .satisfies(file -> {
+                assertThat(Files.contentOf(file, StandardCharsets.UTF_8))
+                    .contains("\nCREATE TABLE product (id ");
+            });
+    }
+
+    @MavenTest
+    void unformattedWithHibernate(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .hasTarget();
+
+        target.withFile("generated-resources/liquibase/mysql/create/unformatted-with-hibernate.sql")
+            .satisfies(file -> {
+                assertThat(Files.contentOf(file, StandardCharsets.UTF_8))
+                    .contains("\nCREATE TABLE product (id ");
+            });
     }
 
     @MavenTest

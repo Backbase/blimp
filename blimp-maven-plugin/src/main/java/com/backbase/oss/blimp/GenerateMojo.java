@@ -33,7 +33,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.codehaus.plexus.util.Scanner;
 
 /**
- * Generate all SQL scripts for all specified databases.
+ * Generates all SQL scripts for all specified databases.
  * <p>
  * This mojo executes the following actions
  * <ol>
@@ -79,14 +79,6 @@ public class GenerateMojo extends MojoBase {
         defaultValue = "**/*.sql,**/db.changelog*.xml,**/db.changelog*.yml",
         required = true)
     private String[] inputPatterns;
-
-    /**
-     * The destination directory of the generated SQL files.
-     */
-    @Parameter(property = "blimp.outputDirectory",
-        defaultValue = "${project.build.directory}/generated-resources/liquibase",
-        required = true)
-    private File outputDirectory;
 
     /**
      * Specifies how to generate the name of SQL script.
@@ -228,7 +220,7 @@ public class GenerateMojo extends MojoBase {
     private void generateSQL(LiquibaseUpdate changes) throws MojoExecutionException {
         for (final String database : this.databases) {
             final LiquibaseUpdate create = changes.newBuilder().database(database).build();
-            final File marker = new File(this.outputDirectory, database + "." + create.digest());
+            final File marker = new File(this.scriptsDirectory, database + "." + create.digest());
             final File createCSV = changeLogCSV(database, "create");
 
             if (this.buildContext.isUptodate(createCSV, marker)) {
@@ -273,12 +265,18 @@ public class GenerateMojo extends MojoBase {
     private ClassLoader classLoader() throws MojoExecutionException {
         try {
             final URL[] urls = this.project.getRuntimeClasspathElements().stream()
+                // Exclude hibernate-core from Liquibase classpath
+                // which would activate the formatter that may conflict
+                // with other Liquibase extensions.
+                // The formatter is only activated when Hibernate
+                // is explicitly set as dependency of the plugin
+                .filter(item -> !item.contains("hibernate-core"))
                 .map(Paths::get)
                 .map(Path::toUri)
                 .map(this::toURL)
                 .toArray(URL[]::new);
 
-            return new URLClassLoader(urls, null);
+            return new URLClassLoader(urls, getClass().getClassLoader());
         } catch (final DependencyResolutionRequiredException e) {
             throw new MojoExecutionException("Cannot get runtime classpath", e);
         }
@@ -288,7 +286,7 @@ public class GenerateMojo extends MojoBase {
     private Resource createResource() {
         final Resource resource = new Resource();
 
-        resource.setDirectory(this.outputDirectory.getPath());
+        resource.setDirectory(this.scriptsDirectory.getPath());
         resource.setIncludes(asList(SQL_FILES));
 
         return resource;
@@ -311,7 +309,7 @@ public class GenerateMojo extends MojoBase {
             .replace("@{service}", this.serviceName)
             .replace('/', File.separatorChar);
 
-        return Paths.get(this.outputDirectory.getPath(), sqlFile);
+        return Paths.get(this.scriptsDirectory.getPath(), sqlFile);
     }
 
     private Writer createWriter(Path path) throws IOException {
@@ -321,6 +319,6 @@ public class GenerateMojo extends MojoBase {
     }
 
     private File changeLogCSV(String database, String kind) {
-        return new File(this.outputDirectory.getPath(), format("%s-%s.csv", database, kind));
+        return new File(this.scriptsDirectory.getPath(), format("%s-%s.csv", database, kind));
     }
 }

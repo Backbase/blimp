@@ -12,9 +12,9 @@
 
 The Backbase Liquibase Integration Maven Plugin is here to eliminate the boilerplate `<execution/>` elements needed to generate the SQL create/update scripts.
 
-## blimp:generate
+## Goal "blimp:generate"
 
-Generate all SQL scripts for all specified databases.
+Generates all SQL scripts for all specified databases.
 
 This mojo executes the following actions
 
@@ -28,7 +28,7 @@ A group is a collection of changesets that are supposed to included in a
 release; they can be either the labels of the changes or the contexts depending on
 the `groupingStrategy` configuration.
 
-Available parameters:
+### Available parameters:
 
     addResource
       Whether to add the SQL scripts as a resource of the project.
@@ -112,11 +112,32 @@ Available parameters:
       - For full creation SQL scripts, the group is set as create.
       User property: blimp.sqlFileNameFormat
 
-## blimp:assemble
+### SQL Formatting
 
-Generate an archive containing the generated SQL files.
+The plugin doesn't provide any SQL formatter per se, but it uses a bridge to the Hibernate formatter implemented as a Liquibase extension.
 
-Available parameters:
+The extension is activated only when Hibernate is declared as a dependency of the plugin, allowing other Liquibase extensions to provide their own formatters.
+
+    <pluginManagement>
+        <plugin>
+            <groupId>com.backbase.oss</groupId>
+            <artifactId>blimp-maven-plugin</artifactId>
+            <version>0.11.4</version>
+            <dependencies>
+                <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-core</artifactId>
+                    <version>5.4.32.Final</version>
+                </dependency>
+            </dependencies>
+        </plugin>
+    </pluginManagement>
+
+## Goal "blimp:assemble"
+
+Creates an archive containing the generated SQL files.
+
+### Available parameters:
 
     attach (Default: true)
       Whether to attach the produced archives as artifacts.
@@ -160,7 +181,7 @@ Available parameters:
       Skip the execution.
       User property: blimp.skip
 
-## blimp:help
+## Goal "blimp:help"
 
 Display help information on backbase-blimp-plugin.
 

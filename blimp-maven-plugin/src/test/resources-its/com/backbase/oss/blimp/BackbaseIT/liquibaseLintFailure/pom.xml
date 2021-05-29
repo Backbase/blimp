@@ -4,16 +4,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>@project.groupId@.@project.artifactId@</groupId>
-    <artifactId>backbase-liquibase-ext</artifactId>
+    <artifactId>liquibase-lint-failure</artifactId>
     <version>@project.version@</version>
     <packaging>pom</packaging>
 
-    <properties>
-        <liquibase-lint-extension.version>13.0.0</liquibase-lint-extension.version>
-    </properties>
-
     <build>
-        <finalName>backbase-liquibase-ext</finalName>
+        <finalName>!${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>@project.groupId@</groupId>
@@ -28,6 +24,9 @@
                         <configuration>
                             <inputDirectory>@project.basedir@/${changelog.location}/product-db</inputDirectory>
                             <changeLogFile>changelog/db.changelog-persistence.xml</changeLogFile>
+                            <properties>
+                                <liquibase.lint.failOnViolation>true</liquibase.lint.failOnViolation>
+                            </properties>
                         </configuration>
                     </execution>
                 </executions>
@@ -35,7 +34,7 @@
                     <dependency>
                         <groupId>com.backbase.buildingblocks</groupId>
                         <artifactId>liquibase-lint-extension</artifactId>
-                        <version>${liquibase-lint-extension.version}</version>
+                        <version>${backbase-liquibase-extension.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

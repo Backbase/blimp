@@ -40,6 +40,10 @@ final class LiquibaseUpdate {
         T call(ResourceAccessor accessor) throws MojoExecutionException;
     }
 
+    static {
+        ServiceLocator.getInstance().addPackageToScan(LiquibaseUpdate.class.getPackage().getName());
+    }
+
     @Builder.Default
     private final String database = "mysql";
     @Builder.Default
@@ -237,6 +241,10 @@ final class LiquibaseUpdate {
         }
 
         final ClassLoader old = currentThread().getContextClassLoader();
+
+        if (old == this.classLoader) {
+            return action.call(this.accessor);
+        }
 
         currentThread().setContextClassLoader(this.classLoader);
 

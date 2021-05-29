@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <build>
-        <finalName>no-update-script</finalName>
+        <finalName>!${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>@project.groupId@</groupId>

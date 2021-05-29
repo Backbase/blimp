@@ -3,13 +3,10 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>@project.groupId@.@project.artifactId@</groupId>
-        <artifactId>arrangement-parent</artifactId>
-        <version>@project.version@</version>
-    </parent>
-
-    <artifactId>arrangement-manager</artifactId>
+    <groupId>@project.groupId@.@project.artifactId@</groupId>
+    <artifactId>unformatted</artifactId>
+    <version>@project.version@</version>
+    <packaging>pom</packaging>
 
     <build>
         <finalName>!${project.artifactId}</finalName>
@@ -25,22 +22,12 @@
                             <goal>assemble</goal>
                         </goals>
                         <configuration>
-                            <databases>
-                                <database>mysql</database>
-                                <database>mssql</database>
-                            </databases>
+                            <inputDirectory>@project.basedir@/${changelog.location}/product-db</inputDirectory>
+                            <changeLogFile>changelog/db.changelog-persistence.xml</changeLogFile>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>@project.groupId@.@project.artifactId@</groupId>
-            <artifactId>arrangement-persistence</artifactId>
-            <version>@project.version@</version>
-        </dependency>
-    </dependencies>
 </project>

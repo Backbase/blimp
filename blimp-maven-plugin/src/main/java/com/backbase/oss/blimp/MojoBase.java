@@ -65,5 +65,3 @@ public abstract class MojoBase extends AbstractMojo {
 
     protected abstract void doExecute() throws MojoExecutionException, MojoFailureException;
 }
-
-

@@ -18,7 +18,7 @@ import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.util.DefaultFileSet;
 
 /**
- * Generate an archive containing the generated SQL files.
+ * Creates an archive containing the generated SQL files.
  */
 @Mojo(name = "assemble", requiresProject = true, defaultPhase = LifecyclePhase.PACKAGE)
 public class AssembleMojo extends MojoBase {
@@ -74,7 +74,7 @@ public class AssembleMojo extends MojoBase {
         final File archive = new File(this.project.getBuild().getDirectory(), archiveName);
         final Archiver archiver = this.archiverManager.getArchiver(archive);
         final FileSet fileSet = DefaultFileSet
-            .fileSet(this.outputDirectory)
+            .fileSet(this.scriptsDirectory)
             .prefixed(this.serviceName + "/")
             .include(new String[] {SQL_FILES})
             .includeEmptyDirs(false);

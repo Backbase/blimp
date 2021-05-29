@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <build>
-        <finalName>review-db</finalName>
+        <finalName>!${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>@project.groupId@</groupId>

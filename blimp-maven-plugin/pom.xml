@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.backbase.oss</groupId>
         <artifactId>blimp</artifactId>
-        <version>0.11.4-SNAPSHOT</version>
+        <version>0.11.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>blimp-maven-plugin</artifactId>
@@ -50,6 +50,23 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.codehaus.gmavenplus</groupId>
+                <artifactId>gmavenplus-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>pre-integration-test</phase>
+                        <goals><goal>execute</goal></goals>
+                        <configuration>
+                            <scripts>
+                                <script>${project.build.testOutputDirectory}/settings.groovy</script>
+                            </scripts>
+                            <allowSystemExits>false</allowSystemExits>
+                            <includeClasspath>PLUGIN_ONLY</includeClasspath>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>com.soebes.itf.jupiter.extension</groupId>
                 <artifactId>itf-maven-plugin</artifactId>
                 <executions>
@@ -57,7 +74,6 @@
                         <phase>pre-integration-test</phase>
                         <goals>
                             <goal>install</goal>
-                            <goal>resources-its</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -140,6 +156,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
             <groupId>com.soebes.itf.jupiter.extension</groupId>
             <artifactId>itf-assertj</artifactId>
             <scope>test</scope>
@@ -160,7 +182,7 @@
         <profile>
             <id>blimp-internal-test</id>
             <properties>
-                <liquibase-lint-extension.version>13.0.0</liquibase-lint-extension.version>
+                <backbase-liquibase-extension.version>13.0.0</backbase-liquibase-extension.version>
             </properties>
             <build>
                 <plugins>
@@ -175,13 +197,6 @@
                     </plugin>
                 </plugins>
             </build>
-            <dependencies>
-                <dependency>
-                    <groupId>com.backbase.buildingblocks</groupId>
-                    <artifactId>liquibase-lint-extension</artifactId>
-                    <version>${liquibase-lint-extension.version}</version>
-                </dependency>
-            </dependencies>
         </profile>
     </profiles>
 

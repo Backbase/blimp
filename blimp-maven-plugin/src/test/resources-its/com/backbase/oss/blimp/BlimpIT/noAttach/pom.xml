@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <build>
-        <finalName>no-attach</finalName>
+        <finalName>!${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>@project.groupId@</groupId>
