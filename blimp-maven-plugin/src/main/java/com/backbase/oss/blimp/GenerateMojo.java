@@ -150,6 +150,8 @@ public class GenerateMojo extends MojoBase {
     @Parameter(property = "blimp.groupingStrategy", defaultValue = "AUTO")
     private ScriptGroupingStrategy groupingStrategy;
 
+    private File cacheDirectory;
+
     @Override
     protected void doExecute() throws MojoExecutionException, MojoFailureException {
         final LiquibaseUpdate update = evaluateChanges();
@@ -157,6 +159,10 @@ public class GenerateMojo extends MojoBase {
         if (update == null) {
             return;
         }
+
+        this.cacheDirectory = new File(this.project.getBuild().getDirectory(), "blimp-cache");
+
+        this.cacheDirectory.mkdirs();
 
         processSystemProperties();
         generateSQL(update);
@@ -220,7 +226,7 @@ public class GenerateMojo extends MojoBase {
     private void generateSQL(LiquibaseUpdate changes) throws MojoExecutionException {
         for (final String database : this.databases) {
             final LiquibaseUpdate create = changes.newBuilder().database(database).build();
-            final File marker = new File(this.scriptsDirectory, database + "." + create.digest());
+            final File marker = cacheFile(database + "." + create.digest());
             final File createCSV = changeLogCSV(database, "create");
 
             if (this.buildContext.isUptodate(createCSV, marker)) {
@@ -228,7 +234,6 @@ public class GenerateMojo extends MojoBase {
             }
 
             try {
-                Files.createDirectories(marker.toPath().getParent());
                 Files.write(marker.toPath(), new byte[0]);
             } catch (final IOException e) {
                 throw new MojoExecutionException(database, e);
@@ -319,6 +324,10 @@ public class GenerateMojo extends MojoBase {
     }
 
     private File changeLogCSV(String database, String kind) {
-        return new File(this.scriptsDirectory.getPath(), format("%s-%s.csv", database, kind));
+        return cacheFile(format("%s-%s.csv", database, kind));
+    }
+
+    private File cacheFile(String name) {
+        return new File(this.cacheDirectory.getPath(), name);
     }
 }
