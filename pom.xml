@@ -30,11 +30,11 @@
 
     <distributionManagement>
         <repository>
-            <id>${repository.id}</id>
+            <id>${repository.release.id}</id>
             <url>${repository.release.url}</url>
         </repository>
         <snapshotRepository>
-            <id>${repository.id}</id>
+            <id>${repository.snapshot.id}</id>
             <url>${repository.snapshot.url}</url>
             <uniqueVersion>false</uniqueVersion>
         </snapshotRepository>

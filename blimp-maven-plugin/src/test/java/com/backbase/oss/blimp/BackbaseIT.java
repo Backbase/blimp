@@ -20,6 +20,7 @@ import com.soebes.itf.jupiter.maven.MavenExecutionResult;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 @MavenJupiterExtension
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 @MavenOption(FAIL_AT_END)
 @MavenOption(SETTINGS)
 @MavenOption("settings.xml")
+@MavenOption("-Dproducts.version=1.2.4")
 @MavenRepository
 @EnabledIfSystemProperty(named = "blimp-internal-test", matches = "^true$")
 class BackbaseIT {
@@ -61,5 +63,61 @@ class BackbaseIT {
                 + ".+failed"
                 + ".+validation"
                 + ".+LintingChangeLogParser.+");
+    }
+
+    @MavenTest
+    @Disabled
+    void productsZip(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .withModule("service")
+            .hasTarget();
+
+        target.withFile("arrangement-manager-sql.zip")
+            .exists().isNotEmpty();
+
+        target.withFile("generated-resources/liquibase/mssql/create/arrangement-manager.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-resources/liquibase/mssql/create_2_19_0/arrangement-manager.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-resources/liquibase/mssql/upgrade_2_20_5_to_2_21_0/arrangement-manager.sql")
+            .exists().isNotEmpty();
+
+        target.withFile("generated-resources/liquibase/mysql/create/arrangement-manager.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-resources/liquibase/mysql/create_2_19_0/arrangement-manager.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-resources/liquibase/mysql/upgrade_2_20_5_to_2_21_0/arrangement-manager.sql")
+            .exists().isNotEmpty();
+
+        assertThat(installedArchive(result, "arrangement-manager", "sql", "zip")).exists().isNotEmpty();
+    }
+
+    @MavenTest
+    @Disabled
+    void productsJar(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .withModule("service")
+            .hasTarget();
+
+        target.withFile("arrangement-manager-sql.zip")
+            .exists().isNotEmpty();
+
+        target.withFile("generated-resources/liquibase/mssql/create/arrangement-manager.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-resources/liquibase/mssql/create_2_19_0/arrangement-manager.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-resources/liquibase/mssql/upgrade_2_20_5_to_2_21_0/arrangement-manager.sql")
+            .exists().isNotEmpty();
+
+        target.withFile("generated-resources/liquibase/mysql/create/arrangement-manager.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-resources/liquibase/mysql/create_2_19_0/arrangement-manager.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-resources/liquibase/mysql/upgrade_2_20_5_to_2_21_0/arrangement-manager.sql")
+            .exists().isNotEmpty();
+
+        assertThat(installedArchive(result, "arrangement-manager", "sql", "zip")).exists().isNotEmpty();
     }
 }

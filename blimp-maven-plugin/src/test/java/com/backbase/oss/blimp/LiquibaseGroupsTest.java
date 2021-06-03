@@ -9,17 +9,6 @@ import org.junit.jupiter.api.Test;
 class LiquibaseGroupsTest {
 
     @Test
-    void arrangementManager() throws MojoExecutionException {
-        final LiquibaseUpdate liquibase = LiquibaseUpdate.builder()
-            .accessor(new FileSystemResourceAccessor("src/test/resources/arrangement-manager"))
-            .build();
-
-        assertThat(liquibase.groups()).hasSize(7);
-        assertThat(liquibase.newBuilder().build().groups()).hasSize(7);
-        assertThat(liquibase.digest()).isNotEmpty();
-    }
-
-    @Test
     void product() throws MojoExecutionException {
         final LiquibaseUpdate liquibase = LiquibaseUpdate.builder()
             .accessor(new FileSystemResourceAccessor("src/test/resources/product-db"))
