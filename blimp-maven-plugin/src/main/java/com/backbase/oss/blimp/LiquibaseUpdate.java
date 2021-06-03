@@ -249,7 +249,7 @@ final class LiquibaseUpdate {
         currentThread().setContextClassLoader(this.classLoader);
 
         try {
-            return action.call(new ClassLoaderResourceAccessor(this.classLoader));
+            return action.call(new NormalizedResourceAccessor(this.classLoader));
         } finally {
             currentThread().setContextClassLoader(old);
         }

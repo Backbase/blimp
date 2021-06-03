@@ -25,9 +25,13 @@ void copySettings(String source, String target) {
     }
 }
 
+boolean isRootPOM(File file) {
+    file.name == 'pom.xml' && !new File(file.parentFile.parentFile, 'pom.xml').exists()
+}
+
 new File("${project.build.testOutputDirectory}/com/backbase/oss/blimp/BlimpIT")
         .eachFileRecurse FileType.FILES, { file ->
-            if( file.name == 'pom.xml' ) {
+            if( isRootPOM(file) ) {
                 copySettings("${project.build.testOutputDirectory}/maven-settings.xml", file.path)
             }
         }
@@ -36,7 +40,7 @@ String settings = System.env.MVN_SETTINGS ?: "${System.getProperty('user.home')}
 
 new File("${project.build.testOutputDirectory}/com/backbase/oss/blimp/BackbaseIT")
         .eachFileRecurse FileType.FILES, { file ->
-            if( file.name == 'pom.xml' ) {
+            if( isRootPOM(file) ) {
                 copySettings(settings, file.path)
             }
         }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>@project.groupId@.@project.artifactId@</groupId>
+        <artifactId>liquibase3-dot-dot</artifactId>
+        <version>@project.version@</version>
+    </parent>
+
+    <artifactId>liquibase3-dot-dot-service</artifactId>
+
+    <build>
+        <finalName>!${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-maven-plugin</artifactId>
+                <version>${liquibase3.version}</version>
+                <configuration>
+                    <changeLogFile>db/changelog/db.changelog-persistence.xml</changeLogFile>
+                    <outputFileEncoding>UTF-8</outputFileEncoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>mysql</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>updateSQL</goal>
+                        </goals>
+                        <configuration>
+                            <url>offline:mysql?changeLogFile=!${project.build.directory}/!${project.artifactId}-mysql.csv</url>
+                            <migrationSqlOutputFile>!${project.build.directory}/!${project.artifactId}-mysql.sql</migrationSqlOutputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>@project.groupId@.@project.artifactId@</groupId>
+            <artifactId>liquibase3-dot-dot-persistence</artifactId>
+            <version>@project.version@</version>
+        </dependency>
+    </dependencies>
+</project>

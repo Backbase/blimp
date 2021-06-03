@@ -17,6 +17,7 @@ import com.soebes.itf.jupiter.extension.SystemProperty;
 import com.soebes.itf.jupiter.maven.MavenExecutionResult;
 import java.nio.charset.StandardCharsets;
 import org.assertj.core.util.Files;
+import org.junit.jupiter.api.Disabled;
 
 @MavenJupiterExtension
 @SystemProperty(value = "changelog.location", content = "src/test/resources")
@@ -27,6 +28,59 @@ import org.assertj.core.util.Files;
 @MavenOption("settings.xml")
 @MavenRepository
 class BlimpIT {
+
+    @MavenTest
+    @Disabled
+    void multiModuleNoDotDot(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .withModule("service")
+            .hasTarget();
+
+        target.withFile("multi-module-no-dot-dot-service-sql.zip")
+            .exists().isNotEmpty();
+
+        assertThat(installedArchive(result, "multi-module-no-dot-dot-service", "sql", "zip")).exists().isNotEmpty();
+    }
+
+    @MavenTest
+    void multiModuleDotDot(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .withModule("service")
+            .hasTarget();
+
+        target.withFile("multi-module-dot-dot-service.jar")
+            .exists().isNotEmpty();
+    }
+
+    @MavenTest
+    @Disabled
+    void liquibase3DotDot(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .withModule("service")
+            .hasTarget();
+
+        target.withFile("liquibase4-dot-dot-service-sql.zip")
+            .exists().isNotEmpty();
+
+        assertThat(installedArchive(result, "liquibase-dot-dot-service", "sql", "zip")).exists().isNotEmpty();
+    }
+
+    @MavenTest
+    @Disabled
+    void liquibase4DotDot(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .withModule("service")
+            .hasTarget();
+
+        target.withFile("liquibase4-dot-dot-service-sql.zip")
+            .exists().isNotEmpty();
+
+        assertThat(installedArchive(result, "liquibase4-dot-dot-service", "sql", "zip")).exists().isNotEmpty();
+    }
 
     @MavenTest
     void product(MavenExecutionResult result) {

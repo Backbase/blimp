@@ -3,13 +3,15 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
     <groupId>@project.groupId@.@project.artifactId@</groupId>
-    <artifactId>unformatted-with-hibernate</artifactId>
+    <artifactId>liquibase4-dot-dot</artifactId>
     <version>@project.version@</version>
-    <packaging>pom</packaging>
+    </parent>
+
+    <artifactId>liquibase4-dot-dot-persistence</artifactId>
 
     <build>
-        <finalName>!${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -23,7 +25,7 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <copy todir="!${project.build.directory}/liquibase-input">
+                                <copy todir="target/classes/db">
                                     <fileset dir="@project.basedir@/${changelog.location}/product-db" />
                                 </copy>
                             </target>
@@ -31,31 +33,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>@project.groupId@</groupId>
-                <artifactId>@project.artifactId@</artifactId>
-                <version>@project.version@</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate</goal>
-                            <goal>assemble</goal>
-                        </goals>
-                        <configuration>
-                            <inputDirectory>!${project.build.directory}/liquibase-input</inputDirectory>
-                            <changeLogFile>changelog/db.changelog-persistence.xml</changeLogFile>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>${hibernate-core.version}</version>
-        </dependency>
-    </dependencies>
 </project>
