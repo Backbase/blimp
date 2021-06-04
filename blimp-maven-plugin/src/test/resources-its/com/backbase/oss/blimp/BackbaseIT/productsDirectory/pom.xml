@@ -4,12 +4,33 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>@project.groupId@.@project.artifactId@</groupId>
-    <artifactId>products-zip</artifactId>
+    <artifactId>products-directory</artifactId>
     <version>@project.version@</version>
-  
+
     <build>
         <finalName>!${project.artifactId}</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.2</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.backbase.dbs.arrangement</groupId>
+                                    <artifactId>arrangement-persistence</artifactId>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>@project.groupId@</groupId>
                 <artifactId>@project.artifactId@</artifactId>
@@ -20,6 +41,8 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
+                            <inputDirectory>!${project.build.directory}/dependency</inputDirectory>
+                            <changeLogFile>db/changelog/db.changelog-persistence.xml</changeLogFile>
                             <databases>
                                 <database>mysql</database>
                             </databases>
@@ -29,7 +52,7 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <dependencies>
         <dependency>
             <groupId>com.backbase.dbs.arrangement</groupId>
@@ -43,4 +66,5 @@
             </exclusions>
         </dependency>
     </dependencies>
+
 </project>

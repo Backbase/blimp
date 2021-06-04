@@ -56,6 +56,14 @@ public class AssembleMojo extends MojoBase {
     @Parameter(property = "blimp.attach", defaultValue = "true")
     private boolean attach;
 
+    /**
+     * Location of the output directory.
+     */
+    @Parameter(property = "blimp.scriptsDirectory",
+        defaultValue = "${project.build.directory}/generated-resources/blimp",
+        required = true)
+    private File scriptsDirectory;
+
     @Override
     protected void doExecute() throws MojoExecutionException {
         for (final String format : this.formats) {

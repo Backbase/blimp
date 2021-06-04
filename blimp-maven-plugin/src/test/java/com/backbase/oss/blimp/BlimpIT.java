@@ -90,14 +90,28 @@ class BlimpIT {
 
         target.withFile("product-db-scripts.zip")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mysql/create/product-db.sql")
+        target.withFile("generated-resources/blimp/mysql/create/product-db.sql")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mysql/initial_2021.07/product-db.sql")
+        target.withFile("generated-resources/blimp/mysql/initial_2021.07/product-db.sql")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mysql/upgrade_2021.07_to_2021.08/product-db.sql")
+        target.withFile("generated-resources/blimp/mysql/upgrade_2021.07_to_2021.08/product-db.sql")
             .exists().isNotEmpty();
 
         assertThat(installedArchive(result, null, "scripts", "zip")).exists().isNotEmpty();
+    }
+
+    @MavenTest
+    void testGenerate(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .hasTarget();
+
+        target.withFile("generated-test-resources/blimp/mysql/create/product-db.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-test-resources/blimp/mysql/initial_2021.07/product-db.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-test-resources/blimp/mysql/upgrade_2021.07_to_2021.08/product-db.sql")
+            .exists().isNotEmpty();
     }
 
     @MavenTest
@@ -108,11 +122,11 @@ class BlimpIT {
 
         target.withFile("review-db-sql.tar")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mysql/create/review-db.sql")
+        target.withFile("generated-resources/blimp/mysql/create/review-db.sql")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mysql/initial_2021.07/review-db.sql")
+        target.withFile("generated-resources/blimp/mysql/initial_2021.07/review-db.sql")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mysql/upgrade_2021.07_to_2021.08/review-db.sql")
+        target.withFile("generated-resources/blimp/mysql/upgrade_2021.07_to_2021.08/review-db.sql")
             .exists().isNotEmpty();
 
         assertThat(installedArchive(result, null, "sql", "tar")).exists().isNotEmpty();
@@ -126,9 +140,9 @@ class BlimpIT {
 
         target.withFile("no-update-script-sql.zip")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mysql/create/no-update-script.sql")
+        target.withFile("generated-resources/blimp/mysql/create/no-update-script.sql")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mysql/initial_2021.07/no-update-script.sql")
+        target.withFile("generated-resources/blimp/mysql/initial_2021.07/no-update-script.sql")
             .doesNotExist();
 
         assertThat(installedArchive(result, null, "sql", "zip")).exists().isNotEmpty();
@@ -142,9 +156,9 @@ class BlimpIT {
 
         target.withFile("force-update-script-sql.zip")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mysql/create/force-update-script.sql")
+        target.withFile("generated-resources/blimp/mysql/create/force-update-script.sql")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mysql/initial_2021.07/force-update-script.sql")
+        target.withFile("generated-resources/blimp/mysql/initial_2021.07/force-update-script.sql")
             .exists().isNotEmpty();
 
         assertThat(installedArchive(result, null, "sql", "zip")).exists().isNotEmpty();
@@ -156,7 +170,7 @@ class BlimpIT {
             .project()
             .hasTarget();
 
-        target.withFile("generated-resources/liquibase/mysql/create/formatted.sql")
+        target.withFile("generated-resources/blimp/mysql/create/formatted.sql")
             .satisfies(file -> {
                 assertThat(Files.contentOf(file, StandardCharsets.UTF_8))
                     .contains("\nCREATE TABLE product (\n ");
@@ -169,7 +183,7 @@ class BlimpIT {
             .project()
             .hasTarget();
 
-        target.withFile("generated-resources/liquibase/mysql/create/unformatted.sql")
+        target.withFile("generated-resources/blimp/mysql/create/unformatted.sql")
             .satisfies(file -> {
                 assertThat(Files.contentOf(file, StandardCharsets.UTF_8))
                     .contains("\nCREATE TABLE product (id ");
@@ -182,7 +196,7 @@ class BlimpIT {
             .project()
             .hasTarget();
 
-        target.withFile("generated-resources/liquibase/mysql/create/unformatted-with-hibernate.sql")
+        target.withFile("generated-resources/blimp/mysql/create/unformatted-with-hibernate.sql")
             .satisfies(file -> {
                 assertThat(Files.contentOf(file, StandardCharsets.UTF_8))
                     .contains("\nCREATE TABLE product (id ");

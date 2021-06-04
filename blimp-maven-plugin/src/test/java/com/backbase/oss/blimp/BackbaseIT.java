@@ -20,7 +20,6 @@ import com.soebes.itf.jupiter.maven.MavenExecutionResult;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 @MavenJupiterExtension
@@ -30,7 +29,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 @MavenOption(FAIL_AT_END)
 @MavenOption(SETTINGS)
 @MavenOption("settings.xml")
-@MavenOption("-Dproducts.version=1.2.4")
+@MavenOption("-Dproducts.version=1.4.17-PRSUM-7545-liquibase-SNAPSHOT")
 @MavenRepository
 @EnabledIfSystemProperty(named = "blimp-internal-test", matches = "^true$")
 class BackbaseIT {
@@ -41,7 +40,7 @@ class BackbaseIT {
             .project()
             .hasTarget();
 
-        target.withFile("generated-resources/liquibase/mysql/create/liquibase-lint.sql")
+        target.withFile("generated-resources/blimp/mysql/create/liquibase-lint.sql")
             .satisfies(file -> {
                 assertThat(contentOf(file, StandardCharsets.UTF_8))
                     .contains("\nCREATE TABLE product (\n ");
@@ -66,58 +65,30 @@ class BackbaseIT {
     }
 
     @MavenTest
-    @Disabled
-    void productsZip(MavenExecutionResult result) {
+    void productsDirectory(MavenExecutionResult result) {
         final MavenProjectResultAssert target = assertThat(result).isSuccessful()
             .project()
-            .withModule("service")
             .hasTarget();
 
-        target.withFile("arrangement-manager-sql.zip")
+        target.withFile("generated-resources/blimp/mysql/create/products-directory.sql")
             .exists().isNotEmpty();
-
-        target.withFile("generated-resources/liquibase/mssql/create/arrangement-manager.sql")
+        target.withFile("generated-resources/blimp/mysql/create_2_19_0/products-directory.sql")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mssql/create_2_19_0/arrangement-manager.sql")
+        target.withFile("generated-resources/blimp/mysql/upgrade_2_20_5_to_2_21_0/products-directory.sql")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mssql/upgrade_2_20_5_to_2_21_0/arrangement-manager.sql")
-            .exists().isNotEmpty();
-
-        target.withFile("generated-resources/liquibase/mysql/create/arrangement-manager.sql")
-            .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mysql/create_2_19_0/arrangement-manager.sql")
-            .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mysql/upgrade_2_20_5_to_2_21_0/arrangement-manager.sql")
-            .exists().isNotEmpty();
-
-        assertThat(installedArchive(result, "arrangement-manager", "sql", "zip")).exists().isNotEmpty();
     }
 
     @MavenTest
-    @Disabled
-    void productsJar(MavenExecutionResult result) {
+    void productsClasspath(MavenExecutionResult result) {
         final MavenProjectResultAssert target = assertThat(result).isSuccessful()
             .project()
-            .withModule("service")
             .hasTarget();
 
-        target.withFile("arrangement-manager-sql.zip")
+        target.withFile("generated-resources/blimp/mysql/create/products-classpath.sql")
             .exists().isNotEmpty();
-
-        target.withFile("generated-resources/liquibase/mssql/create/arrangement-manager.sql")
+        target.withFile("generated-resources/blimp/mysql/create_2_19_0/products-classpath.sql")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mssql/create_2_19_0/arrangement-manager.sql")
+        target.withFile("generated-resources/blimp/mysql/upgrade_2_20_5_to_2_21_0/products-classpath.sql")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mssql/upgrade_2_20_5_to_2_21_0/arrangement-manager.sql")
-            .exists().isNotEmpty();
-
-        target.withFile("generated-resources/liquibase/mysql/create/arrangement-manager.sql")
-            .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mysql/create_2_19_0/arrangement-manager.sql")
-            .exists().isNotEmpty();
-        target.withFile("generated-resources/liquibase/mysql/upgrade_2_20_5_to_2_21_0/arrangement-manager.sql")
-            .exists().isNotEmpty();
-
-        assertThat(installedArchive(result, "arrangement-manager", "sql", "zip")).exists().isNotEmpty();
     }
 }

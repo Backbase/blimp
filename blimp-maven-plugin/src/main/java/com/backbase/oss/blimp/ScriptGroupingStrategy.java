@@ -1,6 +1,6 @@
 package com.backbase.oss.blimp;
 
 public enum ScriptGroupingStrategy {
-    CONTEXTS, LABELS, AUTO
+    CONTEXTS, LABELS, INCLUDES, AUTO
 }
 
