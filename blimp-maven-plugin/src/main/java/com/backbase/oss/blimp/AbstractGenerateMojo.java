@@ -33,16 +33,6 @@ import org.codehaus.plexus.util.Scanner;
 public abstract class AbstractGenerateMojo extends MojoBase {
 
     /**
-     * The location of the <i>changelog</i> to execute.
-     * <p>
-     * Usually a file name relative to the input directory but it can also point to a classpath
-     * resource.
-     * </p>
-     */
-    @Parameter(property = "blimp.changeLogFile", defaultValue = "db.changelog-persistence.xml", required = true)
-    private String changeLogFile;
-
-    /**
      * List of glob patterns specifing the changelog files.
      * <p>
      * Not needed by Liquibase, but used by the plugin to avoid unnecessary executions of the goal.
@@ -78,12 +68,6 @@ public abstract class AbstractGenerateMojo extends MojoBase {
      */
     @Parameter(property = "blimp.databases", defaultValue = "mysql", required = true)
     private List<String> databases;
-
-    /**
-     * Whether to add the SQL scripts as a test resource of the project.
-     */
-    @Parameter(property = "blimp.addTestResource", defaultValue = "false")
-    protected boolean addTestResource;
 
     /**
      * Generates an update script even though there is only one group in changelog.
@@ -146,17 +130,17 @@ public abstract class AbstractGenerateMojo extends MojoBase {
         }
 
         final LiquibaseUpdateBuilder builder = LiquibaseUpdate.builder()
-            .changeLogFile(this.changeLogFile)
+            .changeLogFile(changeLogFile())
             .strategy(this.groupingStrategy)
             .writerProvider(this::createWriter);
 
         final String[] inputs;
 
-        if (getChangeLogDirectory().exists()) {
-            final Scanner scanner = this.buildContext.newScanner(getChangeLogDirectory());
+        if (changeLogDirectory().exists()) {
+            final Scanner scanner = this.buildContext.newScanner(changeLogDirectory());
             scanner.setIncludes(
                 Stream.concat(
-                    Stream.of(this.changeLogFile), stream(this.inputPatterns))
+                    Stream.of(changeLogFile()), stream(this.inputPatterns))
                     .toArray(String[]::new));
             scanner.scan();
             inputs = scanner.getIncludedFiles();
@@ -165,7 +149,7 @@ public abstract class AbstractGenerateMojo extends MojoBase {
         }
 
         if (inputs != null && inputs.length > 0) {
-            builder.accessor(new FileSystemResourceAccessor(getChangeLogDirectory().getPath()));
+            builder.accessor(new FileSystemResourceAccessor(changeLogDirectory().getPath()));
         } else {
             builder.classLoader(classLoader());
         }
@@ -185,7 +169,22 @@ public abstract class AbstractGenerateMojo extends MojoBase {
 
     protected abstract void addOutputResource();
 
-    protected abstract File getChangeLogDirectory();
+    protected abstract String changeLogFile();
+
+    protected abstract File changeLogDirectory();
+
+    protected abstract File scriptsDirectory();
+
+    protected abstract List<String> classpathElements() throws DependencyResolutionRequiredException;
+
+    protected Resource createResource() {
+        final Resource resource = new Resource();
+
+        resource.setDirectory(scriptsDirectory().getPath());
+        resource.setIncludes(asList(SQL_FILES));
+
+        return resource;
+    }
 
     private void processSystemProperties() {
         if (this.properties != null) {
@@ -197,7 +196,7 @@ public abstract class AbstractGenerateMojo extends MojoBase {
         for (final String database : this.databases) {
             final LiquibaseUpdate create = changes.newBuilder().database(database).build();
             final File marker = cacheFile(database + "-" + create.digest());
-            final File createCSV = cacheFile(database + "-create.csv");
+            final File createCSV = cacheFile(marker.getName() + "-create.csv");
 
             if (this.buildContext.isUptodate(createCSV, marker)) {
                 continue;
@@ -251,7 +250,7 @@ public abstract class AbstractGenerateMojo extends MojoBase {
                 .map(Paths::get)
                 .map(Path::toUri)
                 .map(this::toURL),
-                Stream.of(getChangeLogDirectory().toURI().toURL()))
+                Stream.of(changeLogDirectory().toURI().toURL()))
                 .toArray(URL[]::new);
 
             return new URLClassLoader(urls, getClass().getClassLoader());
@@ -259,17 +258,6 @@ public abstract class AbstractGenerateMojo extends MojoBase {
             throw new MojoExecutionException("Cannot construct Liquibase classpath", e);
         }
 
-    }
-
-    protected abstract List<String> classpathElements() throws DependencyResolutionRequiredException;
-
-    protected Resource createResource() {
-        final Resource resource = new Resource();
-
-        resource.setDirectory(getScriptsDirectory().getPath());
-        resource.setIncludes(asList(SQL_FILES));
-
-        return resource;
     }
 
     @SneakyThrows
@@ -289,10 +277,8 @@ public abstract class AbstractGenerateMojo extends MojoBase {
             .replace("@{service}", this.serviceName)
             .replace('/', File.separatorChar);
 
-        return getScriptsDirectory().toPath().resolve(sqlFile);
+        return scriptsDirectory().toPath().resolve(sqlFile);
     }
-
-    protected abstract File getScriptsDirectory();
 
     private Writer createWriter(Path path) throws IOException {
         getLog().info(format("Creating %s", relativePath(path)));
@@ -307,7 +293,7 @@ public abstract class AbstractGenerateMojo extends MojoBase {
     }
 
     private File cacheFile(String name) {
-        final Path output = relativePath(getScriptsDirectory().toPath());
+        final Path output = relativePath(scriptsDirectory().toPath());
         final int nameCount = output.getNameCount();
         final Path relPath = nameCount < 2
             ? output

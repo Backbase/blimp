@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>@project.groupId@.@project.artifactId@</groupId>
-    <artifactId>product-db</artifactId>
+    <artifactId>default-values</artifactId>
     <version>@project.version@</version>
     <packaging>pom</packaging>
 
@@ -23,9 +23,11 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <mkdir dir="!${project.basedir}/src/test/resources/db" />
-                                <copy todir="!${project.basedir}/src/test/resources/db">
+                                <copy todir="!${project.basedir}/src/main/resources/db">
                                     <fileset dir="@project.basedir@/${changelog.location}/product-db" />
+                                </copy>
+                                <copy todir="!${project.basedir}/src/test/resources/db">
+                                    <fileset dir="@project.basedir@/${changelog.location}/review-db" />
                                 </copy>
                             </target>
                         </configuration>
@@ -39,11 +41,10 @@
                 <executions>
                     <execution>
                         <goals>
+                            <goal>generate</goal>
                             <goal>test-generate</goal>
+                            <goal>assemble</goal>
                         </goals>
-                        <configuration>
-                            <testChangeLogFile>db/changelog/db.changelog-persistence.xml</testChangeLogFile>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>

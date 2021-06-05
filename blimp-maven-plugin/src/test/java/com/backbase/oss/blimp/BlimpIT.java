@@ -214,4 +214,37 @@ class BlimpIT {
         assertThat(installedArchive(result, null, "sql", "tar")).doesNotExist();
         assertThat(installedArchive(result, null, "sql", "zip")).doesNotExist();
     }
+
+    @MavenTest
+    void defaults(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .hasTarget();
+
+        target.withFile("blimp-cache/generated-resources/blimp/mysql-ec986528f0bbc875cb747d7cff94199e")
+            .exists().isEmpty();
+        target.withFile("blimp-cache/generated-resources/blimp/mysql-ec986528f0bbc875cb747d7cff94199e-create.csv")
+            .exists().isNotEmpty();
+        target.withFile("blimp-cache/generated-resources/blimp/mysql-ec986528f0bbc875cb747d7cff94199e-update.csv")
+            .exists().isNotEmpty();
+
+        target.withFile("generated-resources/blimp/mysql/create/default-values.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-resources/blimp/mysql/initial_2021.07/default-values.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-resources/blimp/mysql/upgrade_2021.07_to_2021.08/default-values.sql")
+            .exists().isNotEmpty();
+
+        target.withFile("generated-test-resources/blimp/mysql/create/default-values.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-test-resources/blimp/mysql/initial_2021.07/default-values.sql")
+            .exists().isNotEmpty();
+        target.withFile("generated-test-resources/blimp/mysql/upgrade_2021.07_to_2021.08/default-values.sql")
+            .exists().isNotEmpty();
+
+        target.withFile("default-values-sql.zip")
+            .exists().isNotEmpty();
+
+        assertThat(installedArchive(result, null, "sql", "zip")).exists().isNotEmpty();
+    }
 }

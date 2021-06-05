@@ -2,7 +2,6 @@ package com.backbase.oss.blimp;
 
 import java.io.File;
 import java.util.List;
-import lombok.Getter;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -35,12 +34,34 @@ public class GenerateMojo extends AbstractGenerateMojo {
     private boolean addResource;
 
     /**
+     * Whether to add the SQL scripts as a test resource of the project.
+     *
+     * <p>
+     * Use it when the generated SQL should be visible to the testing classpath, but not to the artifact
+     * classpath.
+     * </p>
+     */
+    @Parameter(property = "blimp.addTestResource", defaultValue = "false")
+    protected boolean addTestResource;
+
+    /**
+     * The location of the <i>changelog</i> to execute.
+     * <p>
+     * Usually a file name relative to the input directory but it can also point to a classpath
+     * resource.
+     * </p>
+     */
+    @Parameter(property = "blimp.changeLogFile",
+        defaultValue = "db.changelog-main.xml",
+        required = true)
+    private String changeLogFile;
+
+    /**
      * The base directory of the <i>changelog</i> files.
      */
     @Parameter(property = "blimp.changeLogDirectory",
         defaultValue = "${project.basedir}/src/main/resources",
         required = true)
-    @Getter
     private File changeLogDirectory;
 
     /**
@@ -49,7 +70,6 @@ public class GenerateMojo extends AbstractGenerateMojo {
     @Parameter(property = "blimp.scriptsDirectory",
         defaultValue = "${project.build.directory}/generated-resources/blimp",
         required = true)
-    @Getter
     private File scriptsDirectory;
 
     @Override
@@ -59,6 +79,21 @@ public class GenerateMojo extends AbstractGenerateMojo {
         } else if (this.addTestResource) {
             this.project.addTestResource(createResource());
         }
+    }
+
+    @Override
+    protected File changeLogDirectory() {
+        return this.changeLogDirectory;
+    }
+
+    @Override
+    protected String changeLogFile() {
+        return this.changeLogFile;
+    }
+
+    @Override
+    protected File scriptsDirectory() {
+        return this.scriptsDirectory;
     }
 
     @Override
