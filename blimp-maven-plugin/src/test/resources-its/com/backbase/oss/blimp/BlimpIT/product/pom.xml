@@ -42,7 +42,7 @@
                             <goal>assemble</goal>
                         </goals>
                         <configuration>
-                            <inputDirectory>!${project.build.directory}/liquibase-input</inputDirectory>
+                            <changeLogDirectory>!${project.build.directory}/liquibase-input</changeLogDirectory>
                             <changeLogFile>changelog/db.changelog-persistence.xml</changeLogFile>
                             <classifier>scripts</classifier>
                         </configuration>

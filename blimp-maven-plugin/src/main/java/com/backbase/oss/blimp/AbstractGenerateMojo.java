@@ -152,8 +152,8 @@ public abstract class AbstractGenerateMojo extends MojoBase {
 
         final String[] inputs;
 
-        if (getInputDirectory().exists()) {
-            final Scanner scanner = this.buildContext.newScanner(getInputDirectory());
+        if (getChangeLogDirectory().exists()) {
+            final Scanner scanner = this.buildContext.newScanner(getChangeLogDirectory());
             scanner.setIncludes(
                 Stream.concat(
                     Stream.of(this.changeLogFile), stream(this.inputPatterns))
@@ -165,7 +165,7 @@ public abstract class AbstractGenerateMojo extends MojoBase {
         }
 
         if (inputs != null && inputs.length > 0) {
-            builder.accessor(new FileSystemResourceAccessor(getInputDirectory().getPath()));
+            builder.accessor(new FileSystemResourceAccessor(getChangeLogDirectory().getPath()));
         } else {
             builder.classLoader(classLoader());
         }
@@ -185,7 +185,7 @@ public abstract class AbstractGenerateMojo extends MojoBase {
 
     protected abstract void addOutputResource();
 
-    protected abstract File getInputDirectory();
+    protected abstract File getChangeLogDirectory();
 
     private void processSystemProperties() {
         if (this.properties != null) {
@@ -251,7 +251,7 @@ public abstract class AbstractGenerateMojo extends MojoBase {
                 .map(Paths::get)
                 .map(Path::toUri)
                 .map(this::toURL),
-                Stream.of(getInputDirectory().toURI().toURL()))
+                Stream.of(getChangeLogDirectory().toURI().toURL()))
                 .toArray(URL[]::new);
 
             return new URLClassLoader(urls, getClass().getClassLoader());

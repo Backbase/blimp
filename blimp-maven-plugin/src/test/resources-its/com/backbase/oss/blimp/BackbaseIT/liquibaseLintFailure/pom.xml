@@ -41,7 +41,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputDirectory>!${project.build.directory}/liquibase-input</inputDirectory>
+                            <changeLogDirectory>!${project.build.directory}/liquibase-input</changeLogDirectory>
                             <changeLogFile>changelog/db.changelog-persistence.xml</changeLogFile>
                             <properties>
                                 <liquibase.lint.failOnViolation>true</liquibase.lint.failOnViolation>

@@ -58,7 +58,7 @@
                         <goals><goal>execute</goal></goals>
                         <configuration>
                             <scripts>
-                                <script>${project.build.testOutputDirectory}/settings.groovy</script>
+                                <script>${project.build.testOutputDirectory}/maven-settings.groovy</script>
                             </scripts>
                             <allowSystemExits>false</allowSystemExits>
                             <includeClasspath>PLUGIN_ONLY</includeClasspath>

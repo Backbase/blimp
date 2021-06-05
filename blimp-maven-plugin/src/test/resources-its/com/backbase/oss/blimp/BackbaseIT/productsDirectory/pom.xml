@@ -41,7 +41,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputDirectory>!${project.build.directory}/dependency</inputDirectory>
+                            <changeLogDirectory>!${project.build.directory}/dependency</changeLogDirectory>
                             <changeLogFile>db/changelog/db.changelog-persistence.xml</changeLogFile>
                             <databases>
                                 <database>mysql</database>

@@ -37,11 +37,11 @@ public class GenerateMojo extends AbstractGenerateMojo {
     /**
      * The base directory of the <i>changelog</i> files.
      */
-    @Parameter(property = "blimp.inputDirectory",
+    @Parameter(property = "blimp.changeLogDirectory",
         defaultValue = "${project.basedir}/src/main/resources",
         required = true)
     @Getter
-    private File inputDirectory;
+    private File changeLogDirectory;
 
     /**
      * The location of the output directory.
