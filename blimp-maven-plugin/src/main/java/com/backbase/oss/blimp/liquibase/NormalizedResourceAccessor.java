@@ -1,4 +1,4 @@
-package com.backbase.oss.blimp;
+package com.backbase.oss.blimp.liquibase;
 
 import java.io.IOException;
 import java.io.InputStream;

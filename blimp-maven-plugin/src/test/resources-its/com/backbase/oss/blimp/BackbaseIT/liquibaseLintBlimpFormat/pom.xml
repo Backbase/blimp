@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>@project.groupId@.@project.artifactId@</groupId>
-    <artifactId>formatted</artifactId>
+    <artifactId>liquibase-lint-blimp-format</artifactId>
     <version>@project.version@</version>
     <packaging>pom</packaging>
 
@@ -39,15 +39,22 @@
                     <execution>
                         <goals>
                             <goal>generate</goal>
-                            <goal>assemble</goal>
                         </goals>
                         <configuration>
                             <changeLogDirectory>!${project.build.directory}/liquibase-input</changeLogDirectory>
                             <changeLogFile>changelog/db.changelog-persistence.xml</changeLogFile>
+                            <properties>
+                                <liquibase.formatter.enabled>false</liquibase.formatter.enabled>
+                            </properties>
                         </configuration>
                     </execution>
                 </executions>
                 <dependencies>
+                    <dependency>
+                        <groupId>com.backbase.buildingblocks</groupId>
+                        <artifactId>liquibase-lint-extension</artifactId>
+                        <version>${backbase-liquibase-extension.version}</version>
+                    </dependency>
                     <dependency>
                         <groupId>org.hibernate</groupId>
                         <artifactId>hibernate-core</artifactId>

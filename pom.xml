@@ -5,10 +5,11 @@
 
     <groupId>com.backbase.oss</groupId>
     <artifactId>blimp</artifactId>
-    <version>0.11.9-SNAPSHOT</version>
+    <version>0.15.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <description>Backbase Liquibase Integration Maven Plugin</description>
+    <url>https://github.com/Backbase/blimp</url>
 
     <developers>
         <developer>
@@ -179,6 +180,11 @@
                     <artifactId>lombok-maven-plugin</artifactId>
                     <version>${lombok-maven-plugin.version}</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>1.2.2</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -231,6 +237,21 @@
                 <configuration>
                     <tagNameFormat>release-@{project.version}</tagNameFormat>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                        <configuration>
+                            <flattenMode>ossrh</flattenMode>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

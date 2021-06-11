@@ -165,15 +165,43 @@ class BlimpIT {
     }
 
     @MavenTest
-    void formatted(MavenExecutionResult result) {
+    void formatSQL(MavenExecutionResult result) {
         final MavenProjectResultAssert target = assertThat(result).isSuccessful()
             .project()
             .hasTarget();
 
-        target.withFile("generated-resources/blimp/mysql/create/formatted.sql")
+        target.withFile("generated-resources/blimp/mysql/create/format-sql.sql")
             .satisfies(file -> {
                 assertThat(Files.contentOf(file, StandardCharsets.UTF_8))
-                    .contains("\nCREATE TABLE product (\n ");
+                    .contains("\nCREATE TABLE product (\n   id");
+                assertThat(Files.contentOf(file, StandardCharsets.UTF_8))
+                    .doesNotMatch(".*--\\s+\\*+.*");
+            });
+    }
+
+    @MavenTest
+    void stripComments(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .hasTarget();
+
+        target.withFile("generated-resources/blimp/mysql/create/strip-comments.sql")
+            .satisfies(file -> {
+                assertThat(Files.contentOf(file, StandardCharsets.UTF_8))
+                    .doesNotContain("--  ");
+            });
+    }
+
+    @MavenTest
+    void dontStripComments(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .hasTarget();
+
+        target.withFile("generated-resources/blimp/mysql/create/dont-strip-comments.sql")
+            .satisfies(file -> {
+                assertThat(Files.contentOf(file, StandardCharsets.UTF_8))
+                    .contains("--  ");
             });
     }
 

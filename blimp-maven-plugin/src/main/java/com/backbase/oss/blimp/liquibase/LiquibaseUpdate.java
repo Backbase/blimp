@@ -1,9 +1,10 @@
-package com.backbase.oss.blimp;
+package com.backbase.oss.blimp.liquibase;
 
 import static java.lang.String.format;
 import static java.lang.Thread.currentThread;
 import static java.util.Optional.ofNullable;
 
+import com.backbase.oss.blimp.ScriptGroupingStrategy;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -34,7 +35,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 
 @Builder
-final class LiquibaseUpdate {
+public final class LiquibaseUpdate {
     interface Action<T> {
         T call(ResourceAccessor accessor) throws MojoExecutionException;
     }
@@ -67,7 +68,9 @@ final class LiquibaseUpdate {
     private Set<String> names;
     private String digest;
 
-    LiquibaseUpdateBuilder newBuilder() {
+    private final boolean stripComments;
+
+    public LiquibaseUpdateBuilder newBuilder() {
         return builder()
             .accessor(this.accessor)
             .changeLogFile(this.changeLogFile)
@@ -79,10 +82,11 @@ final class LiquibaseUpdate {
             .labels(this.labels)
             .names(this.names)
             .strategy(this.strategy)
-            .writerProvider(this.writerProvider);
+            .writerProvider(this.writerProvider)
+            .stripComments(this.stripComments);
     }
 
-    Set<String> groups() throws MojoExecutionException {
+    public Set<String> groups() throws MojoExecutionException {
         if (this.names != null) {
             return this.names;
         }
@@ -130,7 +134,7 @@ final class LiquibaseUpdate {
         return this.names;
     }
 
-    String digest() throws MojoExecutionException {
+    public String digest() throws MojoExecutionException {
         if (this.digest != null) {
             return this.digest;
         }
@@ -158,7 +162,7 @@ final class LiquibaseUpdate {
         return this.digest = Hex.encodeHexString(md.digest());
     }
 
-    void generateSQL() throws MojoExecutionException {
+    public void generateSQL() throws MojoExecutionException {
         Objects.requireNonNull(this.changeLogFile, "The attribute 'changeLogFile' is required");
         Objects.requireNonNull(this.database, "The attribute 'database' is required");
         Objects.requireNonNull(this.output, "The attribute 'output' is required");
@@ -173,7 +177,7 @@ final class LiquibaseUpdate {
             try (final Liquibase liquibase = openLiquibase(conn, accessor)) {
                 Files.createDirectories(this.output.getParent());
 
-                try (Writer out = this.writerProvider.create(this.output)) {
+                try (Writer out = createOutput()) {
                     ServiceLocator.getInstance().setResourceAccessor(accessor);
 
                     final Contexts contexts;
@@ -213,12 +217,13 @@ final class LiquibaseUpdate {
         });
     }
 
-    private Liquibase openLiquibase(final DatabaseConnection conn, ResourceAccessor accessor)
-        throws LiquibaseException {
-        return new Liquibase(this.changeLogFile, accessor, conn);
+    private Writer createOutput() throws IOException {
+        final Writer writer = this.writerProvider.create(this.output);
+
+        return this.stripComments ? new StripCommentsWriter(writer) : writer;
     }
 
-    LiquibaseUpdate renameCache() throws MojoExecutionException {
+    public LiquibaseUpdate renameCache() throws MojoExecutionException {
         if (Files.exists(this.changeLogCache)) {
             try {
                 final Path failed = this.changeLogCache.getParent()
@@ -232,6 +237,11 @@ final class LiquibaseUpdate {
         }
 
         return this;
+    }
+
+    private Liquibase openLiquibase(final DatabaseConnection conn, ResourceAccessor accessor)
+        throws LiquibaseException {
+        return new Liquibase(this.changeLogFile, accessor, conn);
     }
 
     private <T> T withClassLoader(Action<T> action) throws MojoExecutionException {

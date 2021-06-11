@@ -119,6 +119,10 @@ the `groupingStrategy` configuration.
       - For full creation SQL scripts, the group name is set as create.
       User property: blimp.sqlFileNameFormat
 
+    stripComments (Default: false)
+      Set to true to remove comments from SQL scripts.
+      User property: blimp.stripComments
+
 ### Full Configuration with default values
 
     <plugin>
@@ -148,8 +152,9 @@ the `groupingStrategy` configuration.
                         <inputPattern>**/db.changelog*.xml</inputPattern>
                         <inputPattern>**/db.changelog*.yml</inputPattern>
                     </inputPatterns>
-                    <sqlFileNameFormat>@{database}/@{group}/@{service}.sql</sqlFileNameFormat>
                     <scriptsDirectory>${project.build.directory}/generated-resources/blimp</scriptsDirectory>
+                    <sqlFileNameFormat>@{database}/@{group}/@{service}.sql</sqlFileNameFormat>
+                    <stripComments>false</stripComments>
                 </configuration>
             </execution>
             <execution>
@@ -238,6 +243,10 @@ The equivalent of `blimp:generate`, but bound to the Maven testing lifecycle.
       - For full creation SQL scripts, the group name is set as create.
       User property: blimp.sqlFileNameFormat
 
+    stripComments (Default: false)
+      Set to true to remove comments from SQL scripts.
+      User property: blimp.stripComments
+
     testChangeLogDirectory (Default: ${project.basedir}/src/test/resources)
       The base directory of the changelog files.
       Required: Yes
@@ -283,6 +292,7 @@ The equivalent of `blimp:generate`, but bound to the Maven testing lifecycle.
                         <inputPattern>**/db.changelog*.yml</inputPattern>
                     </inputPatterns>
                     <sqlFileNameFormat>@{database}/@{group}/@{service}.sql</sqlFileNameFormat>
+                    <stripComments>false</stripComments>
                     <testChangeLogFile>db.changelog-persistence.xml</testChangeLogFile>
                     <testChangeLogDirectory>${project.basedir}/src/test/resources</testChangeLogDirectory>
                     <testScriptsDirectory>${project.build.directory}/generated-test-resources/blimp</testScriptsDirectory>

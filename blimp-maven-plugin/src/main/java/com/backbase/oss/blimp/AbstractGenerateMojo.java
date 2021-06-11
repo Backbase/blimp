@@ -4,7 +4,8 @@ import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 
-import com.backbase.oss.blimp.LiquibaseUpdate.LiquibaseUpdateBuilder;
+import com.backbase.oss.blimp.liquibase.LiquibaseUpdate;
+import com.backbase.oss.blimp.liquibase.LiquibaseUpdate.LiquibaseUpdateBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import liquibase.configuration.LiquibaseConfiguration;
 import liquibase.configuration.SystemPropertyProvider;
+import liquibase.logging.LogService;
 import liquibase.resource.FileSystemResourceAccessor;
 import lombok.SneakyThrows;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -62,6 +64,12 @@ public abstract class AbstractGenerateMojo extends MojoBase {
      */
     @Parameter(property = "blimp.encoding", defaultValue = "UTF-8")
     private String encoding;
+
+    /**
+     * Set to {@code true} to remove comments from SQL scripts.
+     */
+    @Parameter(property = "blimp.stripComments", defaultValue = "false")
+    private boolean stripComments;
 
     /**
      * The list of the databases for which to generate the SQL scripts.
@@ -112,6 +120,8 @@ public abstract class AbstractGenerateMojo extends MojoBase {
 
     @Override
     protected void doExecute() throws MojoExecutionException, MojoFailureException {
+        LogService.setLoggerFactory(new MavenLoggerFactory(getLog()));
+
         final LiquibaseUpdate update = evaluateChanges();
 
         if (update == null) {
@@ -132,6 +142,7 @@ public abstract class AbstractGenerateMojo extends MojoBase {
         final LiquibaseUpdateBuilder builder = LiquibaseUpdate.builder()
             .changeLogFile(changeLogFile())
             .strategy(this.groupingStrategy)
+            .stripComments(this.stripComments)
             .writerProvider(this::createWriter);
 
         final String[] inputs;

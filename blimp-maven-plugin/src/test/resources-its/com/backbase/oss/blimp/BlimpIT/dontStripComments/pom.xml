@@ -4,29 +4,29 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>@project.groupId@.@project.artifactId@</groupId>
-    <artifactId>products-directory</artifactId>
+    <artifactId>dont-strip-comments</artifactId>
     <version>@project.version@</version>
+    <packaging>pom</packaging>
 
     <build>
         <finalName>!${project.artifactId}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.1.2</version>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
-                        <phase>generate-resources</phase>
                         <goals>
-                            <goal>unpack</goal>
+                            <goal>run</goal>
                         </goals>
+                        <phase>generate-resources</phase>
                         <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>com.backbase.dbs.arrangement</groupId>
-                                    <artifactId>arrangement-persistence</artifactId>
-                                </artifactItem>
-                            </artifactItems>
+                            <target>
+                                <copy todir="!${project.build.directory}/liquibase-input">
+                                    <fileset dir="@project.basedir@/${changelog.location}/product-db" />
+                                </copy>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>
@@ -41,30 +41,12 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <changeLogDirectory>!${project.build.directory}/dependency</changeLogDirectory>
-                            <changeLogFile>db.changelog-persistence.xml</changeLogFile>
-                            <databases>
-                                <database>mysql</database>
-                            </databases>
+                            <changeLogDirectory>!${project.build.directory}/liquibase-input</changeLogDirectory>
+                            <changeLogFile>changelog/db.changelog-persistence.xml</changeLogFile>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
     </build>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.backbase.dbs.arrangement</groupId>
-            <artifactId>arrangement-persistence</artifactId>
-            <version>!${products.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-    </dependencies>
-
 </project>

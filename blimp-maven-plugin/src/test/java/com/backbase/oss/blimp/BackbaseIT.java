@@ -29,7 +29,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 @MavenOption(FAIL_AT_END)
 @MavenOption(SETTINGS)
 @MavenOption("settings.xml")
-@MavenOption("-Dproducts.version=1.4.17-PRSUM-7545-liquibase-SNAPSHOT")
+@MavenOption("-Dproducts.version=1.4.17")
 @MavenRepository
 @EnabledIfSystemProperty(named = "blimp-internal-test", matches = "^true$")
 class BackbaseIT {
@@ -48,6 +48,19 @@ class BackbaseIT {
 
         target.withFile(format("liquibase-lint-sql.zip")).exists().isNotEmpty();
         assertThat(installedArchive(result, null, "sql", "zip")).exists().isNotEmpty();
+    }
+
+    @MavenTest
+    void liquibaseLintBlimpFormat(MavenExecutionResult result) {
+        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
+            .project()
+            .hasTarget();
+
+        target.withFile("generated-resources/blimp/mysql/create/liquibase-lint-blimp-format.sql")
+            .satisfies(file -> {
+                assertThat(contentOf(file, StandardCharsets.UTF_8))
+                    .contains("\nCREATE TABLE product (\n   id");
+            });
     }
 
     @MavenTest
