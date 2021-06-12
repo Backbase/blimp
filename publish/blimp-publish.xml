@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ant-demo" default="jfrog" basedir=".">
+
+    <target name="sign" description="description">
+        <apply executable="gpg" failonerror="true">
+            <arg value="--batch" />
+            <arg value="--no-tty" />
+            <arg value="--yes" />
+            <arg value="--local-user" />
+            <arg value="blimp-sign@backbase.com" />
+            <arg value="--verbose" />
+            <arg value="--detach-sign" />
+            <fileset dir="${project.build.directory}">
+                <include name="**/*.jar" />
+                <include name="**/*.pom" />
+            </fileset>
+        </apply>
+    </target>
+
+    <target name="jfrog" depends="sign">
+        <exec executable="jfrog" failonerror="true" dir="${project.build.directory}">
+            <arg line="rt upload" />
+            <arg line="com/backbase/oss/blimp*/${blimp.version}/* backbase-releases" />
+            <arg line="--url=https://repo.backbase.com" />
+            <arg line="--user=${repo.username} --password=${repo.password}" />
+            <arg line="--exclusions=*.repositories;*-local.*;*.lastUpdated;*.sha*" />
+            <arg line="--include-dirs=true --flat=false --detailed-summary" />
+        </exec>
+    </target>
+</project>

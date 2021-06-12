@@ -9,4 +9,11 @@ bin/
 *.log
 *.jdbc
 *.launch
+*~
 pom.xml.*
+
+git-secret
+!*.secret
+.gitsecret/keys/random_seed
+publish/blimp-sign.key
+publish/blimp-publish.properties
