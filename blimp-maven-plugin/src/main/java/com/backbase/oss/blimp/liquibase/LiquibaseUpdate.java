@@ -65,7 +65,7 @@ public final class LiquibaseUpdate {
     private final Set<String> contexts = new LinkedHashSet<>();
     @Builder.Default
     private final Set<String> labels = new LinkedHashSet<>();
-    private Set<String> names;
+    private Set<String> groups;
     private String digest;
 
     private final boolean stripComments;
@@ -80,15 +80,15 @@ public final class LiquibaseUpdate {
             .database(this.database)
             .digest(this.digest)
             .labels(this.labels)
-            .names(this.names)
+            .groups(this.groups)
             .strategy(this.strategy)
             .writerProvider(this.writerProvider)
             .stripComments(this.stripComments);
     }
 
     public Set<String> groups() throws MojoExecutionException {
-        if (this.names != null) {
-            return this.names;
+        if (this.groups != null) {
+            return this.groups;
         }
 
         Objects.requireNonNull(this.changeLogFile, "The attribute 'changeLogFile' is required");
@@ -112,26 +112,26 @@ public final class LiquibaseUpdate {
             case AUTO:
                 if (this.contexts.isEmpty()) {
                     this.strategy = ScriptGroupingStrategy.LABELS;
-                    this.names = this.labels;
+                    this.groups = this.labels;
                 } else {
                     this.strategy = ScriptGroupingStrategy.CONTEXTS;
-                    this.names = this.contexts;
+                    this.groups = this.contexts;
                 }
                 break;
 
             case CONTEXTS:
-                this.names = this.contexts;
+                this.groups = this.contexts;
                 break;
 
             case LABELS:
-                this.names = this.labels;
+                this.groups = this.labels;
                 break;
 
             default:
                 throw new AssertionError("supposed to be unreachable");
         }
 
-        return this.names;
+        return this.groups;
     }
 
     public String digest() throws MojoExecutionException {

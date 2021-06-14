@@ -86,7 +86,7 @@ class BackbaseIT {
         target.withFile("generated-resources/blimp/mysql/create/products-directory.sql")
             .exists().isNotEmpty();
         target.withFile("generated-resources/blimp/mysql/create_2_19_0/products-directory.sql")
-            .exists().isNotEmpty();
+            .doesNotExist();
         target.withFile("generated-resources/blimp/mysql/upgrade_2_20_5_to_2_21_0/products-directory.sql")
             .exists().isNotEmpty();
     }
@@ -100,7 +100,7 @@ class BackbaseIT {
         target.withFile("generated-resources/blimp/mysql/create/products-classpath.sql")
             .exists().isNotEmpty();
         target.withFile("generated-resources/blimp/mysql/create_2_19_0/products-classpath.sql")
-            .exists().isNotEmpty();
+            .doesNotExist();
         target.withFile("generated-resources/blimp/mysql/upgrade_2_20_5_to_2_21_0/products-classpath.sql")
             .exists().isNotEmpty();
     }
