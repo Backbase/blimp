@@ -30,96 +30,155 @@ the `groupingStrategy` configuration.
 
 ### Available parameters:
 
-    addResource (Default: false)
-      Whether to add the SQL scripts as a resource of the project.
-      User property: blimp.addResource
+##### addResource
 
-    addTestResource (Default: false)
-      Whether to add the SQL scripts as a test resource of the project.
-      Use it when the generated SQL should be visible to the testing classpath,
-      but not to the artifact classpath.
-      User property: blimp.addTestResource
+Whether to add the SQL scripts as a resource of the project.
 
-    changeLogDirectory (Default: ${project.basedir}/src/main/resources)
-      The base directory of the changelog files.
-      Required: Yes
-      User property: blimp.changeLogDirectory
+*Default*: `false`
 
-    changeLogFile (Default: db.changelog-main.xml)
-      The location of the changelog to execute.
-      Usually a file name relative to the input directory but it can also point
-      to a classpath resource.
-      Required: Yes
-      User property: blimp.changeLogFile
+*User property*: `blimp.addResource`
 
-    databases (Default: mysql)
-      The list of the databases for which to generate the SQL scripts.
-      Required: Yes
-      User property: blimp.databases
+##### addTestResource
 
-    encoding (Default: UTF-8)
-      The file encoding used for SQL files.
-      User property: blimp.encoding
+Whether to add the SQL scripts as a test resource of the project.
+Use it when the generated SQL should be visible to the testing classpath, but not to the artifact classpath.
 
-    groupingStrategy (Default: AUTO)
-      Controls how to group the changesets to generate one SQL script for a
-      given context or label.
-      The following options are available
-      
-      - CONTEXTS: use the changeset context to group changes.
-      - LABELS: use the changeset label to group changes.
-      - AUTO: tries to identify if the changes use contexts or labels; if both
-        are present, then contexts is preferred.
-      Note that when a context or label contains multiple values, only the first
-      one is considered.
-      User property: blimp.groupingStrategy
+*Default*: `false`
 
-    inputPatterns (Default: **/*.sql,**/db.changelog*.xml,**/db.changelog*.yml)
-      List of glob patterns specifing the changelog files.
-      Not needed by Liquibase, but used by the plugin to avoid unnecessary
-      executions of the goal.
-      Required: Yes
-      User property: blimp.inputPatterns
+*User property*: `blimp.addTestResource`
 
-    properties
-      Specifies a map of properties you want to pass to Liquibase.
-      User property: blimp.properties
+##### changeLogDirectory
 
-    scriptsDirectory (Default:
-    ${project.build.directory}/generated-resources/blimp)
-      The location of the output directory.
-      Required: Yes
-      User property: blimp.scriptsDirectory
+The base directory of the changelog files.
 
-    serviceName (Default: ${project.artifactId})
-      The name of the service.
-      Required: Yes
-      User property: blimp.serviceName
+*Default*: `${project.basedir}/src/main/resources`
 
-    skip
-      Skip the execution.
-      User property: blimp.skip
+*Required*: Yes
 
-    sqlFileNameFormat (Default: @{database}/@{group}/@{service}.sql)
-      Specifies how to generate the name of SQL script.
-      The following placeholders are available:
-      
-      - database: the database type
-      - group: the name of the group for which the goal generates the SQL
-        script.
-      - service: the service name taken from the MojoBase.serviceName.
-      - For full creation SQL scripts, the group name is set as create.
-      User property: blimp.sqlFileNameFormat
+*User property*: `blimp.changeLogDirectory`
 
-    {#stripComments}stripComments (Default: false)
-      Set to true to remove comments from SQL scripts.
-      User property: blimp.stripComments
+##### changeLogFile
 
-    {#withInitialVersion}withInitialVersion (Default: false)
-    Generates a script for the initial version when there is more than one
-    group. Having more than one group means a database has been already created for
-    the initial version, so only the upgrade scripts should be generated.
-    User property: blimp.withInitialVersion
+The location of the changelog to execute.
+Usually a file name relative to the input directory but it can also point to a classpath resource.
+
+*User property*: `blimp.changeLogFile`
+
+*Required*: Yes
+
+*Default*: `db.changelog-main.xml`
+
+##### databases
+
+The list of the databases for which to generate the SQL scripts.
+
+*Default*: `mysql`
+
+*Required*: Yes
+
+*User property*: `blimp.databases`
+
+##### encoding
+
+The file encoding used for SQL files.
+
+*Default*: `UTF-8`
+
+*User property*: `blimp.encoding`
+
+##### groupingStrategy
+
+Controls how to group the changesets to generate one SQL script for a given context or label.
+
+The following options are available
+
+- `CONTEXTS`: use the changeset context to group changes.
+- `LABELS`: use the changeset label to group changes.
+- `AUTO`: tries to identify if the changes use contexts or labels; if both are present, then contexts is preferred.
+
+Note that when a context or label contains multiple values, only the first one is considered.
+
+*Default*: `AUTO`
+
+*User property*: blimp.groupingStrategy
+
+##### inputPatterns
+
+List of glob patterns specifing the changelog files. Not needed by Liquibase, but used by the plugin to avoid unnecessary executions of the goal.
+
+*Default*: `**/*.sql,**/db.changelog*.xml,**/db.changelog*.yml`
+
+*Required*: Yes
+
+*User property*: `blimp.inputPatterns`
+
+##### properties
+
+Specifies a map of properties you want to pass to Liquibase.
+
+*User property*: `blimp.properties`
+
+##### scriptsDirectory
+
+The location of the output directory.
+
+*Default*: `${project.build.directory}/generated-resources/blimp`
+
+*Required*: Yes
+
+*User property*: `blimp.scriptsDirectory`
+
+##### serviceName
+
+The name of the service.
+
+*Default*: `${project.artifactId}`
+
+*Required*: Yes
+
+*User property*: `blimp.serviceName`
+
+##### skip
+
+Skip the execution.
+
+*Default*: `false`
+
+*User property*: `blimp.skip`
+
+##### sqlFileNameFormat
+
+Specifies how to generate the name of SQL script.
+
+The following placeholders are available:
+
+- `database`: the database type
+- `group`: the name of the group for which the goal generates the SQL script.
+- `service`: the service name taken from the [serviceName](#serviceName) parameter.
+
+The group name of the creation script is `create`.
+
+*Default*: `@{database}/@{group}/@{service}.sql`
+
+*User property*: `blimp.sqlFileNameFormat`
+
+##### stripComments
+
+Set to true to remove comments from SQL scripts.
+
+*Default*: `false`
+
+*User property*: `blimp.stripComments`
+
+##### withInitialVersion
+
+Generates a script for the initial version when there is more than one
+group. Having more than one group means a database has been already created for
+the initial version, so only the upgrade scripts should be generated.
+
+*Default*: `false`
+
+*User property*: `blimp.withInitialVersion`
 
 ### Full Configuration with default values
 
@@ -165,90 +224,147 @@ The equivalent of `blimp:generate`, but bound to the Maven testing lifecycle.
 
 ### Available parameters:
 
-    addTestResource (Default: false)
-      Whether to add the SQL scripts as a test resource of the project.
-      User property: blimp.addTestResource
+##### addTestResource
 
-    databases (Default: mysql)
-      The list of the databases for which to generate the SQL scripts.
-      Required: Yes
-      User property: blimp.databases
+Whether to add the SQL scripts as a test resource of the project.
 
-    encoding (Default: UTF-8)
-      The file encoding used for SQL files.
-      User property: blimp.encoding
+*Default*: `false`
 
-    groupingStrategy (Default: AUTO)
-      Controls how to group the changesets to generate one SQL script for a
-      given context or label.
-      The following options are available
-      
-      - CONTEXTS: use the changeset context to group changes.
-      - LABELS: use the changeset label to group changes.
-      - AUTO: tries to identify if the changes use contexts or labels; if both
-        are present, then contexts is preferred.
-      Note that when a context or label contains multiple values, only the first
-      one is considered.
-      User property: blimp.groupingStrategy
+*User property*: `blimp.addTestResource`
 
-    inputPatterns (Default: **/*.sql,**/db.changelog*.xml,**/db.changelog*.yml)
-      List of glob patterns specifing the changelog files.
-      Not needed by Liquibase, but used by the plugin to avoid unnecessary
-      executions of the goal.
-      Required: Yes
-      User property: blimp.inputPatterns
+##### databases
 
-    properties
-      Specifies a map of properties you want to pass to Liquibase.
-      User property: blimp.properties
+The list of the databases for which to generate the SQL scripts.
 
-    serviceName (Default: ${project.artifactId})
-      The name of the service.
-      Required: Yes
-      User property: blimp.serviceName
+*Default*: `mysql`
 
-    skip
-      Skip the execution.
-      User property: blimp.skip
+*Required*: Yes
 
-    sqlFileNameFormat (Default: @{database}/@{group}/@{service}.sql)
-      Specifies how to generate the name of SQL script.
-      The following placeholders are available:
-      
-      - database: the database type
-      - group: the name of the group for which the goal generates the SQL
-        script.
-      - service: the service name taken from the MojoBase.serviceName.
-      - For full creation SQL scripts, the group name is set as create.
-      User property: blimp.sqlFileNameFormat
+*User property*: `blimp.databases`
 
-    stripComments (Default: false)
-      Set to true to remove comments from SQL scripts.
-      User property: blimp.stripComments
+##### encoding
 
-    testChangeLogDirectory (Default: ${project.basedir}/src/test/resources)
-      The base directory of the changelog files.
-      Required: Yes
-      User property: blimp.testChangeLogDirectory
+The file encoding used for SQL files.
 
-    testChangeLogFile (Default: db.changelog-test.xml)
-      The location of the changelog to execute.
-      Usually a file name relative to the input directory but it can also point
-      to a classpath resource.
-      Required: Yes
-      User property: blimp.testChangeLogFile
+*Default*: `UTF-8`
 
-    testScriptsDirectory (Default:
-    ${project.build.directory}/generated-test-resources/blimp)
-      The location of the test output directory.
-      Required: Yes
-      User property: blimp.testScriptsDirectory
+*User property*: `blimp.encoding`
 
-    withInitialVersion (Default: false)
-    Generates a script for the initial version when there is more than one
-    group. Having more than one group means a database has been already created for
-    the initial version, so only the upgrade scripts should be generated.
-    User property: blimp.withInitialVersion
+##### groupingStrategy
+
+Controls how to group the changesets to generate one SQL script for a given context or label.
+
+The following options are available
+
+- `CONTEXTS`: use the changeset context to group changes.
+- `LABELS`: use the changeset label to group changes.
+- `AUTO`: tries to identify if the changes use contexts or labels; if both are present, then contexts is preferred.
+
+Note that when a context or label contains multiple values, only the first one is considered.
+
+*Default*: `AUTO`
+
+*User property*: `blimp.groupingStrategy`
+
+##### inputPatterns
+
+List of glob patterns specifing the changelog files. Not needed by Liquibase, but used by the plugin to avoid unnecessary executions of the goal.
+
+*Default*: `**/*.sql,**/db.changelog*.xml,**/db.changelog*.yml`
+
+*Required*: Yes
+
+*User property*: `blimp.inputPatterns`
+
+##### properties
+
+Specifies a map of properties you want to pass to Liquibase.
+
+*User property*: `blimp.properties`
+
+##### serviceName
+
+The name of the service.
+
+*Default*: `${project.artifactId}`
+
+*Required*: Yes
+
+*User property*: `blimp.serviceName`
+
+##### skip
+
+Skip the execution.
+
+*Default*: `false`
+
+*User property*: `blimp.skip`
+
+##### sqlFileNameFormat
+
+Specifies how to generate the name of SQL script.
+
+The following placeholders are available:
+
+- `database`: the database type
+- `group`: the name of the group for which the goal generates the SQL script.
+- `service`: the service name taken from the [serviceName](#serviceName-1) parameter.
+
+The group name of the creation script is `create`.
+
+*Default*: `@{database}/@{group}/@{service}.sql`
+
+*User property*: `blimp.sqlFileNameFormat`
+
+##### stripComments
+
+Set to true to remove comments from SQL scripts.
+
+*Default*: `false`
+
+*User property*: `blimp.stripComments`
+
+##### testChangeLogDirectory
+
+The base directory of the changelog files.
+
+*Default*: `${project.basedir}/src/test/resources`
+
+*Required*: Yes
+
+*User property*: `blimp.testChangeLogDirectory`
+
+##### testChangeLogFile
+
+The location of the changelog to execute.
+Usually a file name relative to the input directory but it can also point
+to a classpath resource.
+
+*Default*: `db.changelog-test.xml`
+
+*Required*: Yes
+
+*User property*: `blimp.testChangeLogFile`
+
+##### testScriptsDirectory
+
+The location of the test output directory.
+
+*Default*: `${project.build.directory}/generated-test-resources/blimp`
+
+*Required*: Yes
+
+*User property*: `blimp.testScriptsDirectory`
+
+##### withInitialVersion
+
+Generates a script for the initial version when there is more than one
+group. Having more than one group means a database has been already created for
+the initial version, so only the upgrade scripts should be generated.
+
+*Default*: `false`
+
+*User property*: `blimp.withInitialVersion`
 
 ### Full Configuration with default values
 
@@ -293,43 +409,66 @@ Creates an archive containing the generated SQL files.
 
 ###  Available parameters:
 
-    attach (Default: true)
-      Whether to attach the produced archives as artifacts.
-      User property: blimp.attach
+##### attach
 
-    classifier (Default: sql)
-      The classifier of the archive artifact.
-      User property: blimp.classifier
+Whether to attach the produced archives as artifacts.
 
-    formats (Default: zip)
-      Specifies the formats of the archive.
-      Multiple formats can be supplied and the goal assemble will generate an
-      archive for each desired formats.
-      
-      A format is specified by supplying one of the following values in a
-      <format> subelement:
-      
-      - zip creates a ZIP file format
-      - tar creates a TAR file format
-      - tar.gz creates a Gzip TAR file format
-      - tar.xz creates a Xz TAR file format
-      - tar.bz2 creates a Bzip2 TAR file format
-      User property: blimp.formats
+*Default*: `true`
 
-    scriptsDirectory (Default:
-    ${project.build.directory}/generated-resources/blimp)
-      Location of the output directory.
-      Required: Yes
-      User property: blimp.scriptsDirectory
+*User property*: `blimp.attach`
 
-    serviceName (Default: ${project.artifactId})
-      The name of the service.
-      Required: Yes
-      User property: blimp.serviceName
+##### classifier
 
-    skip
-      Skip the execution.
-      User property: blimp.skip
+The classifier of the archive artifact.
+
+*Default*: `sql`
+
+*User property*: `blimp.classifier`
+
+##### formats
+
+Specifies the formats of the archive.
+
+Multiple formats can be supplied and the goal assemble will generate an
+archive for each desired formats.
+
+A format is specified by supplying one of the following values in a `<format/>` subelement:
+
+- zip creates a ZIP file format
+- tar creates a TAR file format
+- tar.gz creates a Gzip TAR file format
+- tar.xz creates a Xz TAR file format
+- tar.bz2 creates a Bzip2 TAR file format
+
+*Default*: `zip`
+
+*User property*: `blimp.formats`
+
+##### scriptsDirectory
+
+Location of the output directory.
+
+*Default*: `${project.build.directory}/generated-resources/blimp`
+
+*Required*: Yes
+
+*User property*: `blimp.scriptsDirectory`
+
+##### serviceName*Default*: ${project.artifactId}
+
+The name of the service.
+
+*Required*: Yes
+
+*User property*: `blimp.serviceName`
+
+##### skip
+
+Skip the execution.
+
+*Default*: `false`
+
+*User property*: `blimp.skip`
 
 ### Full Configuration with default values
 
@@ -360,26 +499,39 @@ Creates an archive containing the generated SQL files.
 
 Display help information on backbase-blimp-plugin.
 
-Call mvn blimp:help -Ddetail=true -Dgoal=<goal-name> to display parameter details.
+Call `mvn blimp:help -Ddetail=true -Dgoal=<goal-name>` to display parameter details.
 
 ### Available parameters
 
-    detail (Default: false)
-      If true, display all settable properties for each goal.
-      User property: detail
+##### detail
 
-    goal
-      The name of the goal for which to show help. If unspecified, all goals
-      will be displayed.
-      User property: goal
+If `true`, display all settable properties for each goal.
 
-    indentSize (Default: 2)
-      The number of spaces per indentation level, should be positive.
-      User property: indentSize
+*Default*: `false`
 
-    lineLength (Default: 80)
-      The maximum length of a display line, should be positive.
-      User property: lineLength
+*User property*: `detail`
+
+##### goal
+
+The name of the goal for which to show help. If unspecified, all goals will be displayed.
+
+*User property*: `goal`
+
+##### indentSize
+
+The number of spaces per indentation level, should be positive.
+
+*Default*: `2`
+
+*User property*: i`ndentSize`
+
+##### lineLength
+
+The maximum length of a display line, should be positive.
+
+*Default*: `80`
+
+*User property*: `lineLength`
 
 ## SQL Formatting
 
