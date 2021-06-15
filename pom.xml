@@ -5,7 +5,7 @@
 
     <groupId>com.backbase.oss</groupId>
     <artifactId>blimp</artifactId>
-    <version>0.15.2-SNAPSHOT</version>
+    <version>0.15.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <description>Backbase Liquibase Integration Maven Plugin</description>
@@ -55,7 +55,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
 
         <groovy.version>3.0.8</groovy.version>
-        <hibernate-core.version>5.4.32.Final</hibernate-core.version>
+        <hibernate.version>5.4.32.Final</hibernate.version>
         <itf.jupiter.version>0.10.0</itf.jupiter.version>
         <junit.version>5.7.2</junit.version>
         <liquibase3.version>3.10.3</liquibase3.version>
@@ -285,7 +285,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>5.4.32.Final</version>
+                <version>${hibernate.version}</version>
             </dependency>
 
             <dependency>

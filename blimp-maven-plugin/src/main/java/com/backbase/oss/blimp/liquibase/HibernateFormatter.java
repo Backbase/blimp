@@ -1,6 +1,7 @@
 package com.backbase.oss.blimp.liquibase;
 
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.joining;
 import static liquibase.util.StringUtils.trimRight;
@@ -8,6 +9,7 @@ import static liquibase.util.StringUtils.trimRight;
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import liquibase.database.Database;
 import liquibase.logging.LogService;
@@ -17,6 +19,8 @@ import liquibase.sql.Sql;
 import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.statement.SqlStatement;
+import liquibase.statement.core.InsertStatement;
+import liquibase.statement.core.InsertSetStatement;
 import liquibase.statement.core.RawSqlStatement;
 import liquibase.structure.DatabaseObject;
 import org.hibernate.engine.jdbc.internal.BasicFormatterImpl;
@@ -25,6 +29,10 @@ import org.hibernate.engine.jdbc.internal.DDLFormatterImpl;
 public class HibernateFormatter extends AbstractSqlGenerator {
     private static final Logger LOG = LogService.getLog(HibernateFormatter.class);
     private static final boolean ENABLED = checkHibernateFormatters();
+    private static final List<Class<? extends SqlStatement>> UNSUPPORTED = asList(
+        InsertStatement.class,
+        InsertSetStatement.class,
+        RawSqlStatement.class);
 
     private static boolean checkHibernateFormatters() {
         try {
@@ -59,8 +67,8 @@ public class HibernateFormatter extends AbstractSqlGenerator {
     }
 
     @Override
-    protected boolean isSupported(SqlStatement statement, Database database) {
-        return !(statement instanceof RawSqlStatement);
+    protected boolean isSupported(SqlStatement statement, @SuppressWarnings("unused") Database database) {
+        return UNSUPPORTED.stream().noneMatch(t -> t.isInstance(statement));
     }
 
     @Override

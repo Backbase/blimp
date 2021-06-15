@@ -25,7 +25,7 @@ public abstract class AbstractSqlGenerator implements SqlGenerator {
 
     @Override
     public int getPriority() {
-        return PRIORITY_DEFAULT + 50;
+        return PRIORITY_DEFAULT + 5;
     }
 
     @Override
