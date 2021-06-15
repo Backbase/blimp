@@ -252,12 +252,6 @@ public abstract class AbstractGenerateMojo extends MojoBase {
             final List<String> classpath = classpathElements();
 
             final URL[] urls = Stream.concat(classpath.stream()
-                // Exclude hibernate-core from Liquibase classpath
-                // which would activate the formatter that may conflict
-                // with other Liquibase extensions (e.g. the formatter provided by Backbase SSDK)
-                // The formatter is only activated when Hibernate
-                // is explicitly set as dependency of the plugin
-                .filter(item -> !item.contains("hibernate-core"))
                 .map(Paths::get)
                 .map(Path::toUri)
                 .map(this::toURL),

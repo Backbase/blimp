@@ -182,41 +182,43 @@ the initial version, so only the upgrade scripts should be generated.
 
 ### Full Configuration with default values
 
-    <plugin>
-        <groupId>com.backbase.oss</groupId>
-        <artifactId>blimp-maven-plugin</artifactId>
-        <configuration>
-            <skip>false</skip>
-            <serviceName>${project.artifactId}</serviceName>
-        </configuration>
-        <executions>
-            <execution>
-                <goals>
-                    <goal>generate</goal>
-                </goals>
-                <configuration>
-                    <addResource>false</addResource>
-                    <addTestResource>false</addTestResource>
-                    <changeLogFile>db.changelog-persistence.xml</changeLogFile>
-                    <changeLogDirectory>${project.basedir}/src/main/resources</changeLogDirectory>
-                    <databases>
-                        <database>mysql</database>
-                    </databases>
-                    <encoding>UTF-8</encoding>
-                    <groupingStrategy>AUTO</groupingStrategy>
-                    <inputPatterns>
-                        <inputPattern>**/*.sql</inputPattern>
-                        <inputPattern>**/db.changelog*.xml</inputPattern>
-                        <inputPattern>**/db.changelog*.yml</inputPattern>
-                    </inputPatterns>
-                    <scriptsDirectory>${project.build.directory}/generated-resources/blimp</scriptsDirectory>
-                    <sqlFileNameFormat>@{database}/@{group}/@{service}.sql</sqlFileNameFormat>
-                    <stripComments>false</stripComments>
-                    <withInitialVersion>false</withInitialVersion>
-                </configuration>
-            </execution>
-        </executions>
-    </plugin>
+```xml
+<plugin>
+    <groupId>com.backbase.oss</groupId>
+    <artifactId>blimp-maven-plugin</artifactId>
+    <configuration>
+        <skip>false</skip>
+        <serviceName>${project.artifactId}</serviceName>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>generate</goal>
+            </goals>
+            <configuration>
+                <addResource>false</addResource>
+                <addTestResource>false</addTestResource>
+                <changeLogFile>db.changelog-persistence.xml</changeLogFile>
+                <changeLogDirectory>${project.basedir}/src/main/resources</changeLogDirectory>
+                <databases>
+                    <database>mysql</database>
+                </databases>
+                <encoding>UTF-8</encoding>
+                <groupingStrategy>AUTO</groupingStrategy>
+                <inputPatterns>
+                    <inputPattern>**/*.sql</inputPattern>
+                    <inputPattern>**/db.changelog*.xml</inputPattern>
+                    <inputPattern>**/db.changelog*.yml</inputPattern>
+                </inputPatterns>
+                <scriptsDirectory>${project.build.directory}/generated-resources/blimp</scriptsDirectory>
+                <sqlFileNameFormat>@{database}/@{group}/@{service}.sql</sqlFileNameFormat>
+                <stripComments>false</stripComments>
+                <withInitialVersion>false</withInitialVersion>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
 
 ## Goal blimp:test-generate
 
@@ -368,40 +370,42 @@ the initial version, so only the upgrade scripts should be generated.
 
 ### Full Configuration with default values
 
-    <plugin>
-        <groupId>com.backbase.oss</groupId>
-        <artifactId>blimp-maven-plugin</artifactId>
-        <configuration>
-            <skip>false</skip>
-            <serviceName>${project.artifactId}</serviceName>
-        </configuration>
-        <executions>
-            <execution>
-                <goals>
-                    <goal>test-generate</goal>
-                </goals>
-                <configuration>
-                    <addTestResource>false</addTestResource>
-                    <databases>
-                        <database>mysql</database>
-                    </databases>
-                    <encoding>UTF-8</encoding>
-                    <groupingStrategy>AUTO</groupingStrategy>
-                    <inputPatterns>
-                        <inputPattern>**/*.sql</inputPattern>
-                        <inputPattern>**/db.changelog*.xml</inputPattern>
-                        <inputPattern>**/db.changelog*.yml</inputPattern>
-                    </inputPatterns>
-                    <sqlFileNameFormat>@{database}/@{group}/@{service}.sql</sqlFileNameFormat>
-                    <stripComments>false</stripComments>
-                    <testChangeLogFile>db.changelog-persistence.xml</testChangeLogFile>
-                    <testChangeLogDirectory>${project.basedir}/src/test/resources</testChangeLogDirectory>
-                    <testScriptsDirectory>${project.build.directory}/generated-test-resources/blimp</testScriptsDirectory>
-                    <withInitialVersion>false</withInitialVersion>
-                </configuration>
-            </execution>
-        </executions>
-    </plugin>
+```xml
+<plugin>
+    <groupId>com.backbase.oss</groupId>
+    <artifactId>blimp-maven-plugin</artifactId>
+    <configuration>
+        <skip>false</skip>
+        <serviceName>${project.artifactId}</serviceName>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>test-generate</goal>
+            </goals>
+            <configuration>
+                <addTestResource>false</addTestResource>
+                <databases>
+                    <database>mysql</database>
+                </databases>
+                <encoding>UTF-8</encoding>
+                <groupingStrategy>AUTO</groupingStrategy>
+                <inputPatterns>
+                    <inputPattern>**/*.sql</inputPattern>
+                    <inputPattern>**/db.changelog*.xml</inputPattern>
+                    <inputPattern>**/db.changelog*.yml</inputPattern>
+                </inputPatterns>
+                <sqlFileNameFormat>@{database}/@{group}/@{service}.sql</sqlFileNameFormat>
+                <stripComments>false</stripComments>
+                <testChangeLogFile>db.changelog-persistence.xml</testChangeLogFile>
+                <testChangeLogDirectory>${project.basedir}/src/test/resources</testChangeLogDirectory>
+                <testScriptsDirectory>${project.build.directory}/generated-test-resources/blimp</testScriptsDirectory>
+                <withInitialVersion>false</withInitialVersion>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
 
 ## Goal blimp:assemble
 
@@ -472,28 +476,30 @@ Skip the execution.
 
 ### Full Configuration with default values
 
-    <plugin>
-        <groupId>com.backbase.oss</groupId>
-        <artifactId>blimp-maven-plugin</artifactId>
-        <configuration>
-            <skip>false</skip>
-            <serviceName>${project.artifactId}</serviceName>
-        </configuration>
-        <executions>
-            <execution>
-                <goals>
-                    <goal>assemble</goal>
-                </goals>
-                <configuration>
-                    <formats>
-                        <format>zip</format>
-                    </formats>
-                    <classifier>sql</classifier>
-                    <attach>true</attach>
-                </configuration>
-            </execution>
-        </executions>
-    </plugin>
+```xml
+<plugin>
+    <groupId>com.backbase.oss</groupId>
+    <artifactId>blimp-maven-plugin</artifactId>
+    <configuration>
+        <skip>false</skip>
+        <serviceName>${project.artifactId}</serviceName>
+    </configuration>
+    <executions>
+        <execution>
+            <goals>
+                <goal>assemble</goal>
+            </goals>
+            <configuration>
+                <formats>
+                    <format>zip</format>
+                </formats>
+                <classifier>sql</classifier>
+                <attach>true</attach>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
 
 ## Goal "blimp:help"
 
@@ -535,41 +541,53 @@ The maximum length of a display line, should be positive.
 
 ## SQL Formatting
 
-The plugin doesn't provide any SQL formatter per se, but it uses a bridge to the Hibernate formatter implemented as a Liquibase extension.
+The plugin doesn't provide any SQL formatter per se, but it uses a bridge to the Hibernate formatter implemented
+as a Liquibase extension.
 
-The extension is activated only when Hibernate is declared as a dependency of the plugin, allowing other Liquibase extensions to provide their own formatters.
+The formatter is enabled by default if Hibernate is found in the classpath of the project or in the classpath
+of the plugin, but it can be disabled by setting the property `blimp.formatter.enabled` to `false` in the
+properties configuration of the plugin
 
-    <pluginManagement>
+```xml
+<build>
+    <plugins>
         <plugin>
             <groupId>com.backbase.oss</groupId>
             <artifactId>blimp-maven-plugin</artifactId>
-            <version>.....</version>
-            <dependencies>
-                <dependency>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-core</artifactId>
-                    <version>5.4.32.Final</version>
-                </dependency>
-            </dependencies>
+            <configuration>
+                <properties>
+                    <blimp.formatter.enabled>false</blimp.formatter.enabled>
+                <properties>
+            <configuration>
         </plugin>
-    </pluginManagement>
+    </plugins>
+</build>
+<dependencies>
+    <dependency>
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-core</artifactId>
+    </dependency>
+</dependencies>
+```
 
 ## Configuration Examples
 
 The most concise example:
 
-    <plugin>
-        <groupId>com.backbase.oss</groupId>
-        <artifactId>blimp-maven-plugin</artifactId>
-        <executions>
-            <execution>
-                <goals>
-                    <goal>generate</goal>
-                    <goal>test-generate</goal>
-                    <goal>assemble</goal>
-                </goals>
-            </execution>
-        </executions>
-    </plugin>
+```xml
+<plugin>
+    <groupId>com.backbase.oss</groupId>
+    <artifactId>blimp-maven-plugin</artifactId>
+    <executions>
+        <execution>
+            <goals>
+                <goal>generate</goal>
+                <goal>test-generate</goal>
+                <goal>assemble</goal>
+            </goals>
+        </execution>
+    </executions>
+</plugin>
+```
 
 More examples can be found in the integration test resources folder.

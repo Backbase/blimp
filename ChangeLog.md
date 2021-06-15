@@ -1,4 +1,8 @@
 
+# release-0.15.3
+
+* **Workaround to ClassCastException thrown by Liquibase**
+
 # release-0.15.1
 
 * **Added [withInitialVersion](README.md#withInitialVersion) mojo parameter**

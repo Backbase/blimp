@@ -11,6 +11,7 @@ import java.io.StringReader;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import liquibase.configuration.LiquibaseConfiguration;
 import liquibase.database.Database;
 import liquibase.logging.LogService;
 import liquibase.logging.Logger;
@@ -51,12 +52,21 @@ public class HibernateFormatter extends AbstractSqlGenerator {
     private final Map<String, Sql> visited = new LinkedHashMap<>();
 
     public HibernateFormatter() {
-        super(BlimpConfiguration.FORMAT_SQL);
+        super(FormatterConfiguration.NAMESPACE);
     }
 
     @Override
-    public boolean isEnabled() {
-        return ENABLED && super.isEnabled();
+    public int getPriority() {
+        return LiquibaseConfiguration.getInstance()
+            .getConfiguration(FormatterConfiguration.class)
+            .getValue(FormatterConfiguration.PRIORITY, Integer.class);
+    }
+
+    @Override
+    protected boolean isEnabled() {
+        return ENABLED && LiquibaseConfiguration.getInstance()
+            .getConfiguration(FormatterConfiguration.class)
+            .getValue(FormatterConfiguration.ENABLED, Boolean.class);
     }
 
     @Override
@@ -77,7 +87,7 @@ public class HibernateFormatter extends AbstractSqlGenerator {
     }
 
     private Sql cached(Sql sql) {
-        // we need to cache formatted SQL because, even though SSDK formatter is disabled, it still breaks
+        // we need to cache formatted SQL because even though SSDK formatter is disabled, it still breaks
         // the formatters chain calling other generators twice
         return this.visited.computeIfAbsent(key(sql), k -> formatSQL(sql));
     }

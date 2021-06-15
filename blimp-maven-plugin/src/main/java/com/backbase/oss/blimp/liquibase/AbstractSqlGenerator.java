@@ -4,7 +4,6 @@ package com.backbase.oss.blimp.liquibase;
 
 import static java.lang.String.format;
 
-import liquibase.configuration.LiquibaseConfiguration;
 import liquibase.database.Database;
 import liquibase.exception.ValidationErrors;
 import liquibase.exception.Warnings;
@@ -20,13 +19,8 @@ import lombok.RequiredArgsConstructor;
 })
 @RequiredArgsConstructor
 public abstract class AbstractSqlGenerator implements SqlGenerator {
-    private final String name;
+    private final String namespace;
     private boolean disabledLogged;
-
-    @Override
-    public int getPriority() {
-        return PRIORITY_DEFAULT + 5;
-    }
 
     @Override
     public final boolean supports(SqlStatement statement, Database database) {
@@ -59,6 +53,8 @@ public abstract class AbstractSqlGenerator implements SqlGenerator {
         return supported;
     }
 
+    protected abstract boolean isEnabled();
+
     @Override
     public ValidationErrors validate(SqlStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
         return sqlGeneratorChain.validate(statement, database);
@@ -77,12 +73,6 @@ public abstract class AbstractSqlGenerator implements SqlGenerator {
     @Override
     public boolean generateRollbackStatementsIsVolatile(Database database) {
         return false;
-    }
-
-    protected boolean isEnabled() {
-        return LiquibaseConfiguration.getInstance()
-            .getConfiguration(BlimpConfiguration.class)
-            .getValue(this.name, Boolean.class);
     }
 
     protected abstract boolean isSupported(SqlStatement statement, Database database);
