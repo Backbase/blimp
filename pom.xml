@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.backbase.oss</groupId>
@@ -66,7 +67,11 @@
     </properties>
 
     <modules>
+        <module>blimp-core</module>
+        <module>blimp-format</module>
         <module>blimp-maven-plugin</module>
+        <module>its</module>
+        <module>test-resources</module>
     </modules>
 
     <build>
@@ -137,7 +142,7 @@
                     <artifactId>maven-install-plugin</artifactId>
                     <version>2.5.2</version>
                     <configuration>
-                        <installAtEnd>true</installAtEnd>
+                        <installAtEnd>false</installAtEnd>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -173,7 +178,7 @@
                 <plugin>
                     <groupId>com.soebes.itf.jupiter.extension</groupId>
                     <artifactId>itf-maven-plugin</artifactId>
-                    <version>0.10.0</version>
+                    <version>${itf.jupiter.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -269,6 +274,33 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>blimp-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>blimp-format</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>blimp-maven-plugin</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.15</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>${junit.version}</version>
@@ -277,26 +309,14 @@
             </dependency>
 
             <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>1.15</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-core</artifactId>
-                <version>${hibernate.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.soebes.itf.jupiter.extension</groupId>
                 <artifactId>itf-assertj</artifactId>
-                <version>0.10.0</version>
+                <version>${itf.jupiter.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.soebes.itf.jupiter.extension</groupId>
                 <artifactId>itf-jupiter-extension</artifactId>
-                <version>0.10.0</version>
+                <version>${itf.jupiter.version}</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -312,6 +332,11 @@
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>1.28</version>
+            </dependency>
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>3.18.1</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>

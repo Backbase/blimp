@@ -41,7 +41,7 @@ public final class LiquibaseUpdate {
     }
 
     static {
-        ServiceLocator.getInstance().addPackageToScan(LiquibaseUpdate.class.getPackage().getName());
+        ServiceLocator.getInstance().addPackageToScan("com.backbase.oss.blimp");
     }
 
     @Builder.Default

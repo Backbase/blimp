@@ -1,11 +1,11 @@
 package com.backbase.oss.blimp;
 
-import com.backbase.oss.blimp.liquibase.HibernateFormatter;
+import com.backbase.oss.blimp.format.HibernateFormatter;
 import com.backbase.oss.blimp.liquibase.LiquibaseUpdate;
+import com.backbase.oss.blimp.liquibase.NormalizedResourceAccessor;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import liquibase.resource.FileSystemResourceAccessor;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -23,8 +23,8 @@ class LiquibaseGenerateTest {
 
         final LiquibaseUpdate liquibase = LiquibaseUpdate.builder()
             .stripComments(false)
-            .accessor(new FileSystemResourceAccessor("src/test/resources/review-db"))
-            .changeLogFile("changelog/db.changelog-persistence.xml")
+            .accessor(new NormalizedResourceAccessor())
+            .changeLogFile("review-db/changelog/db.changelog-persistence.xml")
             .changeLogCache(cache)
             .database("mysql")
             .writerProvider(path -> {
@@ -47,8 +47,8 @@ class LiquibaseGenerateTest {
 
         final LiquibaseUpdate liquibase = LiquibaseUpdate.builder()
             .stripComments(true)
-            .accessor(new FileSystemResourceAccessor("src/test/resources/review-db"))
-            .changeLogFile("changelog/db.changelog-persistence.xml")
+            .accessor(new NormalizedResourceAccessor())
+            .changeLogFile("review-db/changelog/db.changelog-persistence.xml")
             .changeLogCache(cache)
             .database("mysql")
             .writerProvider(path -> {

@@ -1,3 +1,3 @@
-@Library('neo-pipelines@latest') _
+@Library('neo-pipelines@blimp') _
 
 blimp()

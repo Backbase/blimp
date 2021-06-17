@@ -1,5 +1,7 @@
 package com.backbase.oss.blimp.liquibase;
 
+import static java.lang.Thread.currentThread;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystems;
@@ -7,8 +9,12 @@ import java.nio.file.Paths;
 import java.util.Set;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
-final class NormalizedResourceAccessor extends ClassLoaderResourceAccessor {
-    NormalizedResourceAccessor(ClassLoader classLoader) {
+public final class NormalizedResourceAccessor extends ClassLoaderResourceAccessor {
+    public NormalizedResourceAccessor() {
+        super(currentThread().getContextClassLoader());
+    }
+
+    public NormalizedResourceAccessor(ClassLoader classLoader) {
         super(classLoader);
     }
 

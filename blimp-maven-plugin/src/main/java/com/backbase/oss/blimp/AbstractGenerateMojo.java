@@ -250,12 +250,12 @@ public abstract class AbstractGenerateMojo extends MojoBase {
     private ClassLoader classLoader() throws MojoExecutionException {
         try {
             final List<String> classpath = classpathElements();
-
-            final URL[] urls = Stream.concat(classpath.stream()
-                .map(Paths::get)
-                .map(Path::toUri)
-                .map(this::toURL),
-                Stream.of(changeLogDirectory().toURI().toURL()))
+            final URL[] urls = Stream.concat(
+                Stream.of(changeLogDirectory().toURI().toURL()),
+                classpath.stream()
+                    .map(Paths::get)
+                    .map(Path::toUri)
+                    .map(this::toURL))
                 .toArray(URL[]::new);
 
             return new URLClassLoader(urls, getClass().getClassLoader());
