@@ -20,6 +20,7 @@ import com.soebes.itf.jupiter.maven.MavenExecutionResult;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 @MavenJupiterExtension
@@ -35,6 +36,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 class BackbaseIT {
 
     @MavenTest
+    @Disabled
     void liquibaseLint(MavenExecutionResult result) {
         final MavenProjectResultAssert target = assertThat(result).isSuccessful()
             .project()
@@ -51,6 +53,7 @@ class BackbaseIT {
     }
 
     @MavenTest
+    @Disabled
     void liquibaseLintBlimpFormat(MavenExecutionResult result) {
         final MavenProjectResultAssert target = assertThat(result).isSuccessful()
             .project()
@@ -64,6 +67,7 @@ class BackbaseIT {
     }
 
     @MavenTest
+    @Disabled
     void liquibaseLintFailure(MavenExecutionResult result) {
         assertThat(result).isFailure();
 

@@ -253,19 +253,6 @@ class BlimpIT {
     }
 
     @MavenTest
-    void unformattedWithHibernate(MavenExecutionResult result) {
-        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
-            .project()
-            .hasTarget();
-
-        target.withFile("generated-resources/blimp/mysql/create/unformatted-with-hibernate.sql")
-            .satisfies(file -> {
-                assertThat(Files.contentOf(file, StandardCharsets.UTF_8))
-                    .contains("\nCREATE TABLE product (id ");
-            });
-    }
-
-    @MavenTest
     void withInitialVersion(MavenExecutionResult result) {
         final MavenProjectResultAssert target = assertThat(result).isSuccessful()
             .project()

@@ -2,8 +2,8 @@ package com.backbase.oss.blimp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.backbase.oss.blimp.core.NormalizedResourceAccessor;
 import com.backbase.oss.blimp.liquibase.LiquibaseEngine;
-import com.backbase.oss.blimp.liquibase.NormalizedResourceAccessor;
 import liquibase.exception.LiquibaseException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

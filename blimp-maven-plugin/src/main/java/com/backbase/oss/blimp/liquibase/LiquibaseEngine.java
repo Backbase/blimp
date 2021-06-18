@@ -5,6 +5,7 @@ import static java.lang.Thread.currentThread;
 import static java.util.Collections.emptySet;
 
 import com.backbase.oss.blimp.ScriptGroupingStrategy;
+import com.backbase.oss.blimp.core.NormalizedResourceAccessor;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.Files;

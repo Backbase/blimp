@@ -39,11 +39,13 @@
                     <execution>
                         <goals>
                             <goal>generate</goal>
-                            <goal>assemble</goal>
                         </goals>
                         <configuration>
                             <changeLogDirectory>!${project.build.directory}/liquibase-input</changeLogDirectory>
                             <changeLogFile>changelog/db.changelog-persistence.xml</changeLogFile>
+                            <properties>
+                                <blimp.formatter.enabled>false</blimp.formatter.enabled>
+                            </properties>
                         </configuration>
                     </execution>
                 </executions>

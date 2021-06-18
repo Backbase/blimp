@@ -1,4 +1,4 @@
-package com.backbase.oss.blimp.liquibase;
+package com.backbase.oss.blimp.core;
 
 import static java.lang.Thread.currentThread;
 

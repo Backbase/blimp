@@ -1,8 +1,8 @@
 package com.backbase.oss.blimp;
 
-import com.backbase.oss.blimp.format.HibernateFormatter;
+import com.backbase.oss.blimp.core.NormalizedResourceAccessor;
+import com.backbase.oss.blimp.format.BlimpFormatter;
 import com.backbase.oss.blimp.liquibase.LiquibaseEngine;
-import com.backbase.oss.blimp.liquibase.NormalizedResourceAccessor;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,7 +19,7 @@ class LiquibaseGenerateTest {
         final Path output = Paths.get("target", "test-output", "generate");
         final Path cache = output.resolve("cache.csv");
 
-        SqlGeneratorFactory.getInstance().register(new HibernateFormatter());
+        SqlGeneratorFactory.getInstance().register(new BlimpFormatter());
 
         final LiquibaseEngine engine = LiquibaseEngine.builder()
             .stripComments(false)
@@ -43,7 +43,7 @@ class LiquibaseGenerateTest {
         final Path output = Paths.get("target", "test-output", "generate");
         final Path cache = output.resolve("cache.csv");
 
-        SqlGeneratorFactory.getInstance().register(new HibernateFormatter());
+        SqlGeneratorFactory.getInstance().register(new BlimpFormatter());
 
         final LiquibaseEngine engine = LiquibaseEngine.builder()
             .stripComments(true)

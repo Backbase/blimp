@@ -57,7 +57,6 @@
         <forkCount>1C</forkCount>
 
         <groovy.version>3.0.8</groovy.version>
-        <hibernate.version>5.4.32.Final</hibernate.version>
         <itf.jupiter.version>0.10.0</itf.jupiter.version>
         <junit.version>5.7.2</junit.version>
         <liquibase3.version>3.10.3</liquibase3.version>
@@ -289,6 +288,12 @@
                 <artifactId>blimp-maven-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>test-resources</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
 
             <dependency>
                 <groupId>commons-codec</groupId>
@@ -296,9 +301,9 @@
                 <version>1.15</version>
             </dependency>
             <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-core</artifactId>
-                <version>${hibernate.version}</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>1.3.2</version>
             </dependency>
 
             <dependency>
@@ -307,6 +312,11 @@
                 <version>${junit.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>2.23.0</version>
             </dependency>
 
             <dependency>
@@ -363,6 +373,16 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
