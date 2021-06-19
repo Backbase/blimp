@@ -45,6 +45,12 @@
                             <goal>test-generate</goal>
                             <goal>assemble</goal>
                         </goals>
+                        <configuration>
+                            <databases>
+                                <database>mysql</database>
+                                <database>oracle</database>
+                            </databases>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

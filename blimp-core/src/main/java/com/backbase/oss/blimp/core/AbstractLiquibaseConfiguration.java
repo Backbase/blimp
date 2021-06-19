@@ -14,13 +14,21 @@ public abstract class AbstractLiquibaseConfiguration extends AbstractConfigurati
 
         getContainer()
             .addProperty(ENABLED, Boolean.class)
-            .setDescription(format("Controls wether or not %s generator is enabled", generatorName))
+            .setDescription(format("Whether or not %s is enabled", generatorName))
             .setDefaultValue(true);
 
         getContainer()
             .addProperty(PRIORITY, Integer.class)
-            .setDescription(format("The priority of %s generator", generatorName))
+            .setDescription(format("The priority of %s", generatorName))
             .setDefaultValue(SqlGenerator.PRIORITY_DEFAULT + 50);
+    }
+
+    public boolean isEnabled() {
+        return getValue(ENABLED, Boolean.class);
+    }
+
+    public Integer getPriority() {
+        return getValue(PRIORITY, Integer.class);
     }
 }
 

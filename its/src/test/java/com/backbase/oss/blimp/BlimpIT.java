@@ -35,11 +35,11 @@ class BlimpIT {
             .project()
             .hasTarget();
 
-        target.withFile("blimp-cache/generated-resources/blimp/mysql-ec986528f0bbc875cb747d7cff94199e")
+        target.withFile("blimp-cache/generated-resources/blimp/mysql-acfc64159e9f681fc2e4ff6a4f2918a3")
             .exists().isEmpty();
-        target.withFile("blimp-cache/generated-resources/blimp/mysql-ec986528f0bbc875cb747d7cff94199e-create.csv")
+        target.withFile("blimp-cache/generated-resources/blimp/mysql-acfc64159e9f681fc2e4ff6a4f2918a3-create.csv")
             .exists().isNotEmpty();
-        target.withFile("blimp-cache/generated-resources/blimp/mysql-ec986528f0bbc875cb747d7cff94199e-update.csv")
+        target.withFile("blimp-cache/generated-resources/blimp/mysql-acfc64159e9f681fc2e4ff6a4f2918a3-update.csv")
             .exists().isNotEmpty();
 
         target.withFile("generated-resources/blimp/mysql/create/default-values.sql")
@@ -47,6 +47,13 @@ class BlimpIT {
         target.withFile("generated-resources/blimp/mysql/initial_2021.07/default-values.sql")
             .doesNotExist();
         target.withFile("generated-resources/blimp/mysql/upgrade_2021.07_to_2021.08/default-values.sql")
+            .exists().isNotEmpty();
+
+        target.withFile("blimp-cache/generated-test-resources/blimp/mysql-535d9b3ce7d6e7948c7036adbfd973cb")
+            .exists().isEmpty();
+        target.withFile("blimp-cache/generated-test-resources/blimp/mysql-535d9b3ce7d6e7948c7036adbfd973cb-create.csv")
+            .exists().isNotEmpty();
+        target.withFile("blimp-cache/generated-test-resources/blimp/mysql-535d9b3ce7d6e7948c7036adbfd973cb-update.csv")
             .exists().isNotEmpty();
 
         target.withFile("generated-test-resources/blimp/mysql/create/default-values.sql")

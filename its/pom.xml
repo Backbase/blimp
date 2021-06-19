@@ -26,8 +26,11 @@
                 <executions>
                     <execution>
                         <phase>pre-integration-test</phase>
-                        <goals><goal>unpack</goal></goals>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
                         <configuration>
+                            <skip>${skip.integration.tests}</skip>
                             <artifact>${project.groupId}:test-resources:${project.version}</artifact>
                         </configuration>
                     </execution>
@@ -42,6 +45,9 @@
                         <goals>
                             <goal>install</goal>
                         </goals>
+                        <configuration>
+                            <skip>${skip.integration.tests}</skip>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -55,6 +61,7 @@
                             <goal>execute</goal>
                         </goals>
                         <configuration>
+                            <skipScriptExecution>${skip.integration.tests}</skipScriptExecution>
                             <scripts>
                                 <script>${project.build.testOutputDirectory}/maven-settings.groovy</script>
                             </scripts>

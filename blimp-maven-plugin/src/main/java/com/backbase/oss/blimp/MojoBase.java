@@ -59,9 +59,13 @@ public abstract class MojoBase extends AbstractMojo {
             getLog().error(e);
 
             throw e;
+        } catch (final Exception e) {
+            getLog().error(e);
+
+            throw new MojoExecutionException(this.serviceName, e);
         }
     }
 
 
-    protected abstract void doExecute() throws MojoExecutionException, MojoFailureException;
+    protected abstract void doExecute() throws Exception;
 }

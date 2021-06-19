@@ -2,36 +2,43 @@ package com.backbase.oss.blimp;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.backbase.oss.blimp.liquibase.LiquibaseUpdate;
+import com.backbase.oss.blimp.liquibase.LiquibaseEngine;
 import com.backbase.oss.blimp.liquibase.NormalizedResourceAccessor;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.junit.jupiter.api.Test;
+import liquibase.exception.LiquibaseException;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class LiquibaseGroupsTest {
 
-    @Test
-    void product() throws MojoExecutionException {
-        final LiquibaseUpdate liquibase = LiquibaseUpdate.builder()
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "product-db",
+        "review-db",
+    })
+    void run(String changes) throws LiquibaseException {
+        final LiquibaseEngine engine = LiquibaseEngine.builder()
             .accessor(new NormalizedResourceAccessor())
-            .changeLogFile("product-db/changelog/db.changelog-persistence.xml")
+            .changeLogFile(changes + "/changelog/db.changelog-persistence.xml")
             .build();
 
-        assertThat(liquibase.groups()).hasSize(3);
-        assertThat(liquibase.newBuilder().build().groups()).hasSize(3);
-        assertThat(liquibase.digest()).isNotEmpty();
-    }
+        final GroupsVisitor gv = engine.visit(new GroupsVisitor());
 
-    @Test
-    void review() throws MojoExecutionException {
-        final LiquibaseUpdate liquibase = LiquibaseUpdate.builder()
-            .accessor(new NormalizedResourceAccessor())
-            .changeLogFile("review-db/changelog/db.changelog-persistence.xml")
-            .build();
+        assertThat(gv.groups()).hasSize(3);
+        assertThat(gv.strategy()).isEqualTo(ScriptGroupingStrategy.CONTEXTS);
 
-        assertThat(liquibase.groups()).hasSize(3);
-        assertThat(liquibase.newBuilder().build().groups()).hasSize(3);
-        assertThat(liquibase.digest()).isNotEmpty();
+        // test propagation
+        final LiquibaseEngine newEngine =
+            engine.newBuilder()
+                .groups(gv.groups())
+                .strategy(gv.strategy())
+                .build()
+                .newBuilder()
+                .build();
+
+        assertThat(newEngine.getGroups())
+            .containsExactlyElementsOf(gv.groups());
+        assertThat(newEngine.getStrategy())
+            .isEqualTo(gv.strategy());
     }
 
 }
-
