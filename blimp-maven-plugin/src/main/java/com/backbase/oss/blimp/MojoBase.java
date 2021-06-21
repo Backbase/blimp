@@ -1,6 +1,9 @@
 package com.backbase.oss.blimp;
 
-import java.io.File;
+import java.net.URI;
+import java.net.URL;
+import liquibase.configuration.LiquibaseConfiguration;
+import lombok.SneakyThrows;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -12,6 +15,11 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 
 public abstract class MojoBase extends AbstractMojo {
     protected static final String SQL_FILES = "**/*.sql";
+
+    @SneakyThrows
+    protected static URL toURL(URI uri) {
+        return uri.toURL();
+    }
 
     @Parameter(property = "project", readonly = true)
     protected MavenProject project;
@@ -27,14 +35,6 @@ public abstract class MojoBase extends AbstractMojo {
      */
     @Parameter(property = "blimp.skip")
     private boolean skip;
-
-    /**
-     * Location of the output directory.
-     */
-    @Parameter(property = "blimp.outputDirectory",
-        defaultValue = "${project.build.directory}/generated-resources/liquibase",
-        required = true)
-    protected File outputDirectory;
 
     /**
      * The name of the service.
@@ -63,9 +63,10 @@ public abstract class MojoBase extends AbstractMojo {
             getLog().error(e);
 
             throw new MojoExecutionException(this.serviceName, e);
+        } finally {
+            LiquibaseConfiguration.setInstance(null);
         }
     }
-
 
     protected abstract void doExecute() throws Exception;
 }

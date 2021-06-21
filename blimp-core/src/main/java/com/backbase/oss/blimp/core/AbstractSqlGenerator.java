@@ -86,12 +86,12 @@ public abstract class AbstractSqlGenerator implements SqlGenerator {
     @Override
     public int getPriority() {
         return getConfiguration()
-            .getValue(AbstractLiquibaseConfiguration.PRIORITY, Integer.class);
+            .getValue(AbstractBlimpConfiguration.PRIORITY, Integer.class);
     }
 
     protected boolean isEnabled() {
         return getConfiguration()
-            .getValue(AbstractLiquibaseConfiguration.ENABLED, Boolean.class);
+            .getValue(AbstractBlimpConfiguration.ENABLED, Boolean.class);
     }
 
     protected abstract boolean isSupported(SqlStatement statement, Database database);

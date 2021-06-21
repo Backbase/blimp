@@ -2,7 +2,7 @@ package com.backbase.oss.blimp.format;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.backbase.oss.blimp.core.AbstractLiquibaseConfiguration;
+import com.backbase.oss.blimp.core.AbstractBlimpConfiguration;
 import com.backbase.oss.blimp.core.NormalizedResourceAccessor;
 import java.io.StringWriter;
 import java.nio.file.Files;
@@ -49,7 +49,7 @@ class BlimpFormatterTest {
     @Test
     void formatSQL() throws Exception {
         LiquibaseConfiguration.getInstance().getConfiguration(FormatterConfiguration.class)
-            .setValue(AbstractLiquibaseConfiguration.ENABLED, true);
+            .setValue(AbstractBlimpConfiguration.ENABLED, true);
 
         try (final Liquibase liquibase = new Liquibase("product-db/changelog/db.changelog-persistence.xml",
             this.accessor, this.database)) {
@@ -63,7 +63,7 @@ class BlimpFormatterTest {
     @Test
     void formatterDisabled() throws Exception {
         LiquibaseConfiguration.getInstance().getConfiguration(FormatterConfiguration.class)
-            .setValue(AbstractLiquibaseConfiguration.ENABLED, false);
+            .setValue(AbstractBlimpConfiguration.ENABLED, false);
 
         try (final Liquibase liquibase = new Liquibase("product-db/changelog/db.changelog-persistence.xml",
             this.accessor, this.database)) {
@@ -77,7 +77,7 @@ class BlimpFormatterTest {
     @Test
     void loadData() throws Exception {
         LiquibaseConfiguration.getInstance().getConfiguration(FormatterConfiguration.class)
-            .setValue(AbstractLiquibaseConfiguration.ENABLED, true);
+            .setValue(AbstractBlimpConfiguration.ENABLED, true);
 
         try (final Liquibase liquibase = new Liquibase("load-data/db.changelog-main.xml",
             this.accessor, this.database)) {

@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>@project.groupId@.@project.artifactId@</groupId>
-    <artifactId>liquibase-lint</artifactId>
+    <artifactId>lint</artifactId>
     <version>@project.version@</version>
     <packaging>pom</packaging>
 
@@ -23,7 +23,7 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <copy todir="!${project.build.directory}/liquibase-input">
+                                <copy todir="!${project.build.directory}/blimp-input">
                                     <fileset dir="@project.basedir@/${changelog.location}/product-db" />
                                 </copy>
                             </target>
@@ -37,21 +37,25 @@
                 <version>@project.version@</version>
                 <executions>
                     <execution>
+                        <id>lint</id>
                         <goals>
-                            <goal>generate</goal>
-                            <goal>assemble</goal>
+                            <goal>lint</goal>
                         </goals>
                         <configuration>
-                            <changeLogDirectory>!${project.build.directory}/liquibase-input</changeLogDirectory>
+                            <changeLogDirectory>!${project.build.directory}/blimp-input</changeLogDirectory>
                             <changeLogFile>changelog/db.changelog-persistence.xml</changeLogFile>
+                            <lintProperties>
+                                <db.type>mysql</db.type>
+                            </lintProperties>
+                            <rules>blimp-lint-rules.yml</rules>
                         </configuration>
                     </execution>
                 </executions>
                 <dependencies>
                     <dependency>
-                        <groupId>com.backbase.buildingblocks</groupId>
-                        <artifactId>liquibase-lint-extension</artifactId>
-                        <version>${backbase-liquibase-extension.version}</version>
+                        <groupId>com.backbase.backend</groupId>
+                        <artifactId>blimp-lint-rules</artifactId>
+                        <version>${blimp-lint-rules.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

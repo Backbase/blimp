@@ -69,6 +69,7 @@
     <modules>
         <module>blimp-core</module>
         <module>blimp-format</module>
+        <module>blimp-lint</module>
         <module>blimp-maven-plugin</module>
         <module>its</module>
         <module>test-resources</module>
@@ -285,6 +286,11 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
+                <artifactId>blimp-lint</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>blimp-maven-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -296,6 +302,11 @@
             </dependency>
 
             <dependency>
+                <groupId>org.liquibase</groupId>
+                <artifactId>liquibase-core</artifactId>
+                <version>${liquibase3.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>1.15</version>
@@ -304,6 +315,16 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>1.3.2</version>
+            </dependency>
+            <dependency>
+                <groupId>io.leangen.geantyref</groupId>
+                <artifactId>geantyref</artifactId>
+                <version>1.3.11</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.29</version>
             </dependency>
 
             <dependency>
@@ -333,16 +354,6 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>1.2.3</version>
-            </dependency>
-            <dependency>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-core</artifactId>
-                <version>${liquibase3.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>1.28</version>
             </dependency>
             <dependency>
                 <groupId>org.assertj</groupId>

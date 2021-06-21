@@ -41,6 +41,7 @@
                 <executions>
                     <execution>
                         <goals>
+                            <goal>lint</goal>
                             <goal>generate</goal>
                             <goal>test-generate</goal>
                             <goal>assemble</goal>
@@ -50,6 +51,9 @@
                                 <database>mysql</database>
                                 <database>oracle</database>
                             </databases>
+                            <lintProperties>
+                                <db.type>mysql</db.type>
+                            </lintProperties>
                         </configuration>
                     </execution>
                 </executions>

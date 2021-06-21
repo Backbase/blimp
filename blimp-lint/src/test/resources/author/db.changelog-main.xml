@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+    <changeSet id="010" author="bob">
+        <createTable tableName="main">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="020" author="alice">
+        <addColumn tableName="main">
+            <column name="created" type="DATETIME"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="030" author="">
+        <addColumn tableName="main">
+            <column name="updated" type="DATETIME"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

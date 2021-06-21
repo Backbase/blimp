@@ -23,7 +23,7 @@
                         <phase>generate-resources</phase>
                         <configuration>
                             <target>
-                                <copy todir="!${project.build.directory}/liquibase-input">
+                                <copy todir="!${project.build.directory}/blimp-input">
                                     <fileset dir="@project.basedir@/${changelog.location}/product-db" />
                                 </copy>
                             </target>
@@ -42,7 +42,7 @@
                             <goal>assemble</goal>
                         </goals>
                         <configuration>
-                            <changeLogDirectory>!${project.build.directory}/liquibase-input</changeLogDirectory>
+                            <changeLogDirectory>!${project.build.directory}/blimp-input</changeLogDirectory>
                             <changeLogFile>changelog/db.changelog-persistence.xml</changeLogFile>
                             <classifier>scripts</classifier>
                         </configuration>

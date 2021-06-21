@@ -44,6 +44,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>blimp-format</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>blimp-lint</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>

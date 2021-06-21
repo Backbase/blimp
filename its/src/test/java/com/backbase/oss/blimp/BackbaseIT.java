@@ -1,11 +1,9 @@
 package com.backbase.oss.blimp;
 
-import static com.backbase.oss.blimp.TestUtils.installedArchive;
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 import static com.soebes.itf.jupiter.extension.MavenCLIOptions.BATCH_MODE;
 import static com.soebes.itf.jupiter.extension.MavenCLIOptions.FAIL_AT_END;
 import static com.soebes.itf.jupiter.extension.MavenCLIOptions.SETTINGS;
-import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.util.Files.contentOf;
 
@@ -19,8 +17,6 @@ import com.soebes.itf.jupiter.extension.SystemProperty;
 import com.soebes.itf.jupiter.maven.MavenExecutionResult;
 import java.io.File;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 @MavenJupiterExtension
@@ -31,54 +27,40 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 @MavenOption(SETTINGS)
 @MavenOption("settings.xml")
 @MavenOption("-Dproducts.version=1.4.17")
+@MavenOption("-Dblimp-lint-rules.version=0.1.0-SNAPSHOT")
 @MavenRepository
 @EnabledIfSystemProperty(named = "blimp-internal-test", matches = "^true$")
 class BackbaseIT {
 
     @MavenTest
-    @Disabled
-    void liquibaseLint(MavenExecutionResult result) {
+    void lint(MavenExecutionResult result) {
         final MavenProjectResultAssert target = assertThat(result).isSuccessful()
             .project()
             .hasTarget();
 
-        target.withFile("generated-resources/blimp/mysql/create/liquibase-lint.sql")
-            .satisfies(file -> {
-                assertThat(contentOf(file, StandardCharsets.UTF_8))
-                    .contains("\nCREATE TABLE product (\n ");
-            });
-
-        target.withFile(format("liquibase-lint-sql.zip")).exists().isNotEmpty();
-        assertThat(installedArchive(result, null, "sql", "zip")).exists().isNotEmpty();
+        target.withFile("site/blimp.csv")
+            .exists().isNotEmpty();
     }
 
     @MavenTest
-    @Disabled
-    void liquibaseLintBlimpFormat(MavenExecutionResult result) {
-        final MavenProjectResultAssert target = assertThat(result).isSuccessful()
-            .project()
-            .hasTarget();
-
-        target.withFile("generated-resources/blimp/mysql/create/liquibase-lint-blimp-format.sql")
-            .satisfies(file -> {
-                assertThat(contentOf(file, StandardCharsets.UTF_8))
-                    .contains("\nCREATE TABLE product (\n   id");
-            });
-    }
-
-    @MavenTest
-    @Disabled
-    void liquibaseLintFailure(MavenExecutionResult result) {
+    void lintFail(MavenExecutionResult result) {
         assertThat(result).isFailure();
+
+        final MavenProjectResultAssert target = assertThat(result)
+            .project()
+            .hasTarget();
+
+        target.withFile("site/blimp.csv")
+            .exists().isNotEmpty();
 
         final File stdout = result.getMavenLog().getStdout().toFile();
 
         assertThat(contentOf(stdout, Charset.defaultCharset()))
             .matches("(?s)"
-                + ".+db.changelog-persistence.xml"
-                + ".+failed"
-                + ".+validation"
-                + ".+LintingChangeLogParser.+");
+                + ".*\\[ERROR\\]"
+                + ".*db.changelog-persistence.xml"
+                + ".*doesn't"
+                + ".*equal.+");
     }
 
     @MavenTest

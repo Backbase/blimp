@@ -4,13 +4,13 @@ import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 
+import com.backbase.oss.blimp.core.PropertiesConfigProvider;
 import com.backbase.oss.blimp.liquibase.LiquibaseEngine;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -92,7 +92,7 @@ public abstract class AbstractGenerateMojo extends MojoBase {
      * Specifies a map of properties you want to pass to Liquibase.
      */
     @Parameter(property = "blimp.properties")
-    private MavenPropertiesProvider properties;
+    private PropertiesConfigProvider properties;
 
     /**
      * Controls how to group the changesets to generate one SQL script for a given context or label.
@@ -259,19 +259,13 @@ public abstract class AbstractGenerateMojo extends MojoBase {
                 classpath.stream()
                     .map(Paths::get)
                     .map(Path::toUri)
-                    .map(this::toURL))
+                    .map(MojoBase::toURL))
                 .toArray(URL[]::new);
 
             return new URLClassLoader(urls, getClass().getClassLoader());
         } catch (final DependencyResolutionRequiredException | MalformedURLException e) {
             throw new MojoExecutionException("Cannot construct Liquibase classpath", e);
         }
-
-    }
-
-    @SneakyThrows
-    private URL toURL(URI uri) {
-        return uri.toURL();
     }
 
     @SneakyThrows
