@@ -56,12 +56,6 @@
                     <groupId>com.backbase.oss</groupId>
                     <artifactId>blimp-maven-plugin</artifactId>
                     <version>${blimp.version}</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>*</groupId>
-                            <artifactId>*</artifactId>
-                        </exclusion>
-                    </exclusions>
                 </dependency>
             </dependencies>
             <build>

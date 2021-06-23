@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="ant-demo" default="jfrog" basedir=".">
 
-    <target name="sign" description="description">
+    <target name="sign">
         <apply executable="gpg" failonerror="true">
-            <arg value="--batch" />
-            <arg value="--no-tty" />
-            <arg value="--yes" />
-            <arg value="--local-user" />
-            <arg value="blimp-sign@backbase.com" />
-            <arg value="--verbose" />
-            <arg value="--detach-sign" />
+            <arg line="--detach-sign" />
+            <arg line="--local-user blimp-sign@backbase.com" />
             <fileset dir="${project.build.directory}">
-                <include name="**/*.jar" />
-                <include name="**/*.pom" />
+                <include name="com/backbase/oss/blimp*/${blimp.version}/*.jar" />
+                <include name="com/backbase/oss/blimp*/${blimp.version}/*.pom" />
             </fileset>
         </apply>
     </target>
