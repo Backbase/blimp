@@ -31,7 +31,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * Compliance checks.
+ * Verifies the changelog compliance with a predefined set of rules.
  */
 @Mojo(name = "lint", requiresProject = true, defaultPhase = LifecyclePhase.GENERATE_RESOURCES, threadSafe = true)
 public class LintMojo extends MojoBase {
@@ -55,13 +55,13 @@ public class LintMojo extends MojoBase {
     private File changeLogDirectory;
 
     /**
-     * Location of the output directory.
+     * Causes an build failure if a rule with the specified severity is violated.
      */
     @Parameter(property = "blimp.lint.failOnSeverity")
     private LintRuleSeverity failOnSeverity;
 
     /**
-     * Location of the output directory.
+     * The location of the lint report file.
      */
     @Parameter(property = "blimp.lint.reportFile", required = true,
         defaultValue = "${project.reporting.outputDirectory}/blimp.csv")
@@ -74,7 +74,8 @@ public class LintMojo extends MojoBase {
     private PropertiesConfigProvider lintProperties;
 
     /**
-     * Location of an optional rules resource in {@code yaml} format.
+     * The location of an optional rules resource in {@code yaml} format; it can be the full path of a
+     * local file or a classpath resource.
      */
     @Parameter(property = "blimp.lint.rules")
     private String rules;
@@ -107,7 +108,15 @@ public class LintMojo extends MojoBase {
             final PropertiesConfigProvider cvp = new PropertiesConfigProvider(this.rules);
 
             try (InputStream input = rulesURL.openStream()) {
-                cvp.loadYaml(input);
+                if (this.rules.matches(".+\\.y(a?)ml")) {
+                    cvp.loadYaml(input);
+                } else if (this.rules.endsWith(".properties")) {
+                    cvp.load(input);
+                } else if (this.rules.endsWith(".xml")) {
+                    cvp.loadFromXML(input);
+                } else {
+                    throw new MojoFailureException("Unknown format of rules file " + this.rules);
+                }
             }
 
             cvps.add(cvp);

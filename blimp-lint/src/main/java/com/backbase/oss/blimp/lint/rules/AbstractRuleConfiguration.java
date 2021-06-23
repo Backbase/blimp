@@ -40,7 +40,7 @@ public abstract class AbstractRuleConfiguration extends AbstractBlimpConfigurati
         getContainer()
             .addProperty(SEVERITY, String.class)
             .setDescription(format("The severity of the rule '%s' violation", this.description))
-            .setDefaultValue(LintRuleSeverity.WARN.name());
+            .setDefaultValue(LintRuleSeverity.values()[0].name());
     }
 
     public LintRuleSeverity getSeverity() {
