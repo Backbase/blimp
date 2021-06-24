@@ -1,4 +1,9 @@
 
+# release-0.16.0
+
+* **added changelog linter**
+* **added SQL formatter**
+
 # release-0.15.3
 
 * **Workaround to ClassCastException thrown by Liquibase**
