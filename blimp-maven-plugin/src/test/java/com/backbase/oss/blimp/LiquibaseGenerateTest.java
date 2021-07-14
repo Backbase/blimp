@@ -1,8 +1,7 @@
 package com.backbase.oss.blimp;
 
-import com.backbase.oss.blimp.core.NormalizedResourceAccessor;
 import com.backbase.oss.blimp.format.BlimpFormatter;
-import com.backbase.oss.blimp.liquibase.LiquibaseEngine;
+import com.backbase.oss.blimp.liquibase.LiquibaseGenerator;
 import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,11 +20,11 @@ class LiquibaseGenerateTest {
 
         SqlGeneratorFactory.getInstance().register(new BlimpFormatter());
 
-        final LiquibaseEngine engine = LiquibaseEngine.builder()
+        final LiquibaseGenerator engine = LiquibaseGenerator.builder()
             .stripComments(false)
-            .accessor(new NormalizedResourceAccessor())
+            .classLoader(getClass().getClassLoader())
             .changeLogFile("review-db/changelog/db.changelog-persistence.xml")
-            .changeLogCache(cache)
+            .changeLogCache(cache.toString())
             .database("mysql")
             .writerProvider(path -> {
                 LOG.info("Path: {}", path);
@@ -45,11 +44,11 @@ class LiquibaseGenerateTest {
 
         SqlGeneratorFactory.getInstance().register(new BlimpFormatter());
 
-        final LiquibaseEngine engine = LiquibaseEngine.builder()
+        final LiquibaseGenerator engine = LiquibaseGenerator.builder()
             .stripComments(true)
-            .accessor(new NormalizedResourceAccessor())
+            .classLoader(getClass().getClassLoader())
             .changeLogFile("review-db/changelog/db.changelog-persistence.xml")
-            .changeLogCache(cache)
+            .changeLogCache(cache.toString())
             .database("mysql")
             .writerProvider(path -> {
                 LOG.info("Path: {}", path);

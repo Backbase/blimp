@@ -5,7 +5,8 @@ import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 
 import com.backbase.oss.blimp.core.PropertiesConfigProvider;
-import com.backbase.oss.blimp.liquibase.LiquibaseEngine;
+import com.backbase.oss.blimp.liquibase.LiquibaseGenerator;
+import com.backbase.oss.blimp.liquibase.LiquibaseGenerator.LiquibaseGeneratorBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -123,28 +124,29 @@ public abstract class AbstractGenerateMojo extends MojoBase {
     protected void doExecute() throws Exception {
         LogService.setLoggerFactory(new MavenLoggerFactory(getLog()));
 
-        final LiquibaseEngine update = evaluateChanges();
+        final LiquibaseGenerator update = evaluateChanges();
 
-        if (update == null) {
-            return;
+        if (update != null) {
+            generateSQL(update);
         }
-
-        processSystemProperties();
-        generateSQL(update);
     }
 
-    private LiquibaseEngine evaluateChanges() throws MojoExecutionException, LiquibaseException {
+    private LiquibaseGenerator evaluateChanges() throws MojoExecutionException, LiquibaseException {
         if (this.databases.isEmpty()) {
             getLog().info("SQL generation skipped, no database specified.");
 
             return null;
         }
 
-        final LiquibaseEngine.Builder builder = LiquibaseEngine.builder()
+        final LiquibaseGeneratorBuilder<?, ?> builder = LiquibaseGenerator.builder()
             .changeLogFile(changeLogFile())
             .strategy(this.groupingStrategy)
             .stripComments(this.stripComments)
             .writerProvider(this::createWriter);
+
+        if (this.properties != null) {
+            builder.configProvider(this.properties);
+        }
 
         final String[] inputs;
 
@@ -166,9 +168,9 @@ public abstract class AbstractGenerateMojo extends MojoBase {
             builder.classLoader(classLoader());
         }
 
-        final LiquibaseEngine engine = builder.build();
-        final GroupsVisitor gv = engine.visit(new GroupsVisitor(this.groupingStrategy));
-        final Set<String> groups = gv.groups();
+        final LiquibaseGenerator engine = builder.build();
+        final GroupsVisitor gv = new GroupsVisitor(this.groupingStrategy);
+        final Set<String> groups = engine.visit(gv);
 
         if (groups.isEmpty()) {
             getLog().info("SQL generation skipped, no change found");
@@ -178,8 +180,8 @@ public abstract class AbstractGenerateMojo extends MojoBase {
 
         addOutputResource();
 
-        return engine.newBuilder()
-            .strategy(gv.strategy())
+        return engine.toBuilder()
+            .strategy(gv.getStrategy())
             .groups(groups)
             .build();
     }
@@ -209,10 +211,10 @@ public abstract class AbstractGenerateMojo extends MojoBase {
         }
     }
 
-    private void generateSQL(LiquibaseEngine engine) throws LiquibaseException {
+    private void generateSQL(LiquibaseGenerator engine) throws LiquibaseException {
         for (final String database : this.databases) {
-            final LiquibaseEngine create = engine.newBuilder().database(database).build();
-            final String digest = create.visit(new DigestVisitor()).digest();
+            final LiquibaseGenerator create = engine.toBuilder().database(database).build();
+            final String digest = create.visit(new DigestVisitor());
             final File marker = cacheFile(database + "-" + digest);
             final File createCSV = cacheFile(marker.getName() + "-create.csv");
 
@@ -225,8 +227,8 @@ public abstract class AbstractGenerateMojo extends MojoBase {
                 throw new LiquibaseException(database, e);
             }
 
-            create.newBuilder()
-                .changeLogCache(createCSV.toPath())
+            create.toBuilder()
+                .changeLogCache(createCSV.getPath())
                 .output(sqlFileName(database, "create"))
                 .build()
                 .discardCache()
@@ -235,13 +237,13 @@ public abstract class AbstractGenerateMojo extends MojoBase {
             final String[] groups = create.groups();
             final File updateCSV = cacheFile(marker.getName() + "-update.csv");
 
-            final LiquibaseEngine update = create.newBuilder()
-                .changeLogCache(updateCSV.toPath())
+            final LiquibaseGenerator update = create.toBuilder()
+                .changeLogCache(updateCSV.getPath())
                 .build()
                 .discardCache();
 
             for (int g = 0; g < groups.length; g++) {
-                update.newBuilder()
+                update.toBuilder()
                     .select(groups[g])
                     .output(sqlFileName(database, groups[g]))
                     .writerProvider(this.withInitialVersion || g > 0 ? this::createWriter : p -> new NullWriter())

@@ -2,6 +2,7 @@ package com.backbase.oss.blimp;
 
 import static java.util.Optional.ofNullable;
 
+import com.backbase.oss.blimp.core.LiquibaseVisitor;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -11,15 +12,16 @@ import liquibase.Labels;
 import liquibase.changelog.ChangeSet;
 import liquibase.changelog.DatabaseChangeLog;
 import liquibase.changelog.filter.ChangeSetFilterResult;
-import liquibase.changelog.visitor.ChangeSetVisitor;
 import liquibase.database.Database;
 import liquibase.exception.LiquibaseException;
+import lombok.Getter;
 
-class GroupsVisitor implements ChangeSetVisitor {
+class GroupsVisitor implements LiquibaseVisitor<Set<String>> {
 
     private final Set<String> contexts = new LinkedHashSet<>();
     private final Set<String> labels = new LinkedHashSet<>();
 
+    @Getter
     private ScriptGroupingStrategy strategy;
 
     GroupsVisitor() {
@@ -30,7 +32,9 @@ class GroupsVisitor implements ChangeSetVisitor {
         this.strategy = strategy;
     }
 
-    Set<String> groups() {
+
+    @Override
+    public Set<String> getResult() {
         switch (this.strategy) {
             case AUTO:
                 if (this.contexts.isEmpty()) {
@@ -50,15 +54,6 @@ class GroupsVisitor implements ChangeSetVisitor {
             default:
                 throw new AssertionError("supposed to be unreachable");
         }
-    }
-
-    ScriptGroupingStrategy strategy() {
-        return this.strategy;
-    }
-
-    @Override
-    public Direction getDirection() {
-        return Direction.FORWARD;
     }
 
     @SuppressWarnings("unused")

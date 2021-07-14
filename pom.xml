@@ -5,7 +5,7 @@
 
     <groupId>com.backbase.oss</groupId>
     <artifactId>blimp</artifactId>
-    <version>0.16.1-SNAPSHOT</version>
+    <version>0.16.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <description>Backbase Liquibase Integration Maven Plugin</description>
@@ -60,7 +60,7 @@
         <junit.version>5.7.2</junit.version>
         <liquibase3.version>3.10.3</liquibase3.version>
         <liquibase4.version>4.1.1</liquibase4.version>
-        <lombok.version>1.18.16</lombok.version>
+        <lombok.version>1.18.20</lombok.version>
         <lombok-maven-plugin.version>${lombok.version}.0</lombok-maven-plugin.version>
         <maven.libs.version>3.6.0</maven.libs.version>
     </properties>
@@ -70,6 +70,7 @@
         <module>blimp-format</module>
         <module>blimp-lint</module>
         <module>blimp-maven-plugin</module>
+        <module>example</module>
         <module>its</module>
         <module>test-resources</module>
     </modules>

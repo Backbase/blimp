@@ -13,7 +13,17 @@
         </addColumn>
     </changeSet>
 
-    <changeSet id="2022.01_002" author="backbase" context="upgrade_2021.08_to_2022.01">
+    <changeSet id="2021.01_002" context="upgrade_2021.08_to_2022.01" author="backbase" dbms="mssql">
+        <comment>Do something for MSSQL only</comment>
+        <sqlFile dbms="mssql"
+          encoding="UTF-8"
+          path="../support-files/${db.type}/mssql_specific.sql"
+          relativeToChangelogFile="true"
+          splitStatements="true"
+          stripComments="true"/>
+    </changeSet>
+
+    <changeSet id="2022.01_003" author="backbase" context="upgrade_2021.08_to_2022.01">
         <tagDatabase tag="2022.01"/>
     </changeSet>
 

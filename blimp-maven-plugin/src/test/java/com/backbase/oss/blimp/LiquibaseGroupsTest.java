@@ -3,7 +3,8 @@ package com.backbase.oss.blimp;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.backbase.oss.blimp.core.NormalizedResourceAccessor;
-import com.backbase.oss.blimp.liquibase.LiquibaseEngine;
+import com.backbase.oss.blimp.liquibase.LiquibaseGenerator;
+import java.util.Set;
 import liquibase.exception.LiquibaseException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -16,29 +17,30 @@ class LiquibaseGroupsTest {
         "review-db",
     })
     void run(String changes) throws LiquibaseException {
-        final LiquibaseEngine engine = LiquibaseEngine.builder()
+        final LiquibaseGenerator engine = LiquibaseGenerator.builder()
             .accessor(new NormalizedResourceAccessor())
             .changeLogFile(changes + "/changelog/db.changelog-persistence.xml")
             .build();
 
-        final GroupsVisitor gv = engine.visit(new GroupsVisitor());
+        final GroupsVisitor gv = new GroupsVisitor();
+        final Set<String> groups = engine.visit(gv);
 
-        assertThat(gv.groups()).hasSize(3);
-        assertThat(gv.strategy()).isEqualTo(ScriptGroupingStrategy.CONTEXTS);
+        assertThat(groups).hasSize(3);
+        assertThat(gv.getStrategy()).isEqualTo(ScriptGroupingStrategy.CONTEXTS);
 
         // test propagation
-        final LiquibaseEngine newEngine =
-            engine.newBuilder()
-                .groups(gv.groups())
-                .strategy(gv.strategy())
+        final LiquibaseGenerator newEngine =
+            engine.toBuilder()
+                .groups(groups)
+                .strategy(gv.getStrategy())
                 .build()
-                .newBuilder()
+                .toBuilder()
                 .build();
 
         assertThat(newEngine.getGroups())
-            .containsExactlyElementsOf(gv.groups());
+            .containsExactlyElementsOf(groups);
         assertThat(newEngine.getStrategy())
-            .isEqualTo(gv.strategy());
+            .isEqualTo(gv.getStrategy());
     }
 
 }

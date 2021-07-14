@@ -4,15 +4,13 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.backbase.oss.blimp.core.AbstractBlimpConfiguration;
+import com.backbase.oss.blimp.core.LiquibaseEngine;
+import com.backbase.oss.blimp.core.PropertiesConfigProvider;
 import com.backbase.oss.blimp.lint.BlimpLinter;
 import com.backbase.oss.blimp.lint.LintRule;
 import com.backbase.oss.blimp.lint.LintRuleFinder;
 import com.backbase.oss.blimp.lint.LintRuleViolation;
 import java.util.List;
-import java.util.Properties;
-import liquibase.configuration.ConfigurationProperty;
-import liquibase.configuration.ConfigurationValueProvider;
-import liquibase.configuration.LiquibaseConfiguration;
 import liquibase.exception.LiquibaseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
@@ -21,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-abstract class AbstractRuleTest implements ConfigurationValueProvider {
+abstract class AbstractRuleTest {
 
     private final String rule;
     private final Class<? extends LintRule>[] types;
@@ -31,11 +29,10 @@ abstract class AbstractRuleTest implements ConfigurationValueProvider {
         this.types = types;
     }
 
-    private final Properties properties = new Properties();
+    private final PropertiesConfigProvider properties = new PropertiesConfigProvider();
 
     @BeforeEach
     void setUp() throws Exception {
-        LiquibaseConfiguration.getInstance().init(this);
         setLintProperty(AbstractBlimpConfiguration.ENABLED, "true");
     }
 
@@ -57,24 +54,15 @@ abstract class AbstractRuleTest implements ConfigurationValueProvider {
         LintRuleFinder.getInstance().setTypes(this.types);
 
         final String file = this.rule + "/db.changelog-main.xml";
-        final BlimpLinter linter = BlimpLinter.builder()
+        final LiquibaseEngine engine = LiquibaseEngine.builder()
             .changeLogFile(file)
+            .classLoader(getClass().getClassLoader())
+            .configProvider(this.properties)
             .build();
-
-        final List<LintRuleViolation> violations = linter.run();
+        final List<LintRuleViolation> violations = engine.visit(new BlimpLinter());
 
         violations.forEach(System.out::println);
 
         return violations;
-    }
-
-    @Override
-    public Object getValue(String namespace, String property) {
-        return this.properties.get(namespace + "." + property);
-    }
-
-    @Override
-    public String describeValueLookupLogic(ConfigurationProperty property) {
-        return format("[test] '%s.%s'", property.getNamespace(), property.getName());
     }
 }

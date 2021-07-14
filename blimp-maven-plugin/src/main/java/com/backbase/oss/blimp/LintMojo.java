@@ -2,6 +2,8 @@ package com.backbase.oss.blimp;
 
 import static java.lang.String.format;
 
+import com.backbase.oss.blimp.core.LiquibaseEngine;
+import com.backbase.oss.blimp.core.LiquibaseEngine.LiquibaseEngineBuilder;
 import com.backbase.oss.blimp.core.PropertiesConfigProvider;
 import com.backbase.oss.blimp.lint.BlimpLinter;
 import com.backbase.oss.blimp.lint.LintRuleSeverity;
@@ -15,13 +17,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
-import liquibase.configuration.ConfigurationValueProvider;
-import liquibase.configuration.LiquibaseConfiguration;
-import liquibase.configuration.SystemPropertyProvider;
 import liquibase.resource.FileSystemResourceAccessor;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -85,22 +82,20 @@ public class LintMojo extends MojoBase {
         if (!this.changeLogDirectory.exists()) {
             return;
         }
-        if (!new File(this.changeLogDirectory, this.changeLogFile).exists()) {
+
+        final File changeLog = new File(this.changeLogDirectory, this.changeLogFile);
+
+        if (!changeLog.exists()) {
             return;
         }
 
-        final BlimpLinter linter = BlimpLinter.builder()
+        getLog().info("Checking " + changeLog);
+
+        final LiquibaseEngineBuilder<?, ?> builder = LiquibaseEngine.builder()
             .changeLogFile(this.changeLogFile)
+            .classLoader(classLoader())
             .accessor(new FileSystemResourceAccessor(this.changeLogDirectory.getPath()))
-            .build();
-
-        final Collection<ConfigurationValueProvider> cvps = new ArrayList<>();
-
-        cvps.add(new SystemPropertyProvider());
-
-        if (this.lintProperties != null) {
-            cvps.add(this.lintProperties);
-        }
+            .configProvider(this.lintProperties);
 
         final URL rulesURL = this.rules != null ? findRules() : null;
 
@@ -119,17 +114,10 @@ public class LintMojo extends MojoBase {
                 }
             }
 
-            cvps.add(cvp);
-
-            linter.withProperties(cvp);
-        }
-        if (this.lintProperties != null) {
-            linter.withProperties(this.lintProperties);
+            builder.configProvider(cvp);
         }
 
-        LiquibaseConfiguration.getInstance().init(cvps.toArray(new ConfigurationValueProvider[0]));
-
-        final List<LintRuleViolation> violations = linter.run();
+        final List<LintRuleViolation> violations = builder.build().visit(new BlimpLinter());
 
         if (violations.isEmpty()) {
             return;

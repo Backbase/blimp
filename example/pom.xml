@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.backbase.oss</groupId>
+        <artifactId>blimp</artifactId>
+        <version>0.16.2-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>example</artifactId>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>test-resources</artifactId>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.backbase.oss</groupId>
+                <artifactId>blimp-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>lint</goal>
+                            <goal>generate</goal>
+                            <goal>test-generate</goal>
+                            <goal>assemble</goal>
+                        </goals>
+                        <configuration>
+                            <changeLogDirectory>${project.build.directory}/dependency/product-db</changeLogDirectory>
+                            <changeLogFile>changelog/db.changelog-persistence.xml</changeLogFile>
+                            <testChangeLogDirectory>${project.build.directory}/dependency/review-db</testChangeLogDirectory>
+                            <testChangeLogFile>changelog/db.changelog-persistence.xml</testChangeLogFile>
+                            <databases>
+                                <database>mssql</database>
+                                <database>mysql</database>
+                                <database>oracle</database>
+                            </databases>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+

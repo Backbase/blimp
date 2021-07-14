@@ -19,6 +19,7 @@
             <pluginExecutionFilter>
                 <goals>
                     <goal>assemble</goal>
+                    <goal>lint</goal>
                 </goals>
             </pluginExecutionFilter>
             <action>
