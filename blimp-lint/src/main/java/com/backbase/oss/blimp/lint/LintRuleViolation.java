@@ -22,6 +22,7 @@ public class LintRuleViolation {
         private String id;
         private String rule;
         private String property;
+        private String database;
         private LintRuleSeverity severity;
         private String message;
         private final List<Object> values = new ArrayList<>();
@@ -48,6 +49,14 @@ public class LintRuleViolation {
             checkUsed();
 
             this.property = property;
+
+            return this;
+        }
+
+        public Builder database(String database) {
+            checkUsed();
+
+            this.database = database;
 
             return this;
         }
@@ -86,6 +95,7 @@ public class LintRuleViolation {
                     this.id,
                     this.rule,
                     this.property,
+                    this.database,
                     this.severity,
                     format(this.message, this.values.toArray(new Object[0])));
             } finally {
@@ -113,6 +123,10 @@ public class LintRuleViolation {
     @NonNull
     @ToString.Include
     private final String property;
+    @NonNull
+    @ToString.Include
+    private final String database;
+    @NonNull
     @ToString.Include
     private final LintRuleSeverity severity;
     @NonNull

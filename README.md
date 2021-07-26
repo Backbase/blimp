@@ -72,7 +72,7 @@ Usually a file name relative to the input directory but it can also point to a c
 
 ##### databases
 
-The list of the databases for which to generate the SQL scripts.
+The database list for which SQL scripts are generated.
 
 *Default*: `mysql`
 
@@ -156,7 +156,7 @@ The following placeholders are available:
 
 - `database`: the database type
 - `group`: the name of the group for which the goal generates the SQL script.
-- `service`: the service name taken from the [serviceName](#serviceName) parameter.
+- `service`: the service name taken from the [serviceName](#serviceName-1) parameter.
 
 The group name of the creation script is `create`.
 
@@ -247,17 +247,41 @@ The base directory of the changelog files.
 The location of the changelog to execute.
 Usually a file name relative to the input directory but it can also point to a classpath resource.
 
+*Default*: `db.changelog-main.xml`
+
 *User property*: `blimp.changeLogFile`
 
 *Required*: Yes
 
-*Default*: `db.changelog-main.xml`
+##### databases
+
+The database list for which changelogs are checked.
+
+*Default*: `mysql`
+
+*User property*: `blimp.databases`
+
+*Required*: Yes
 
 ##### failOnSeverity
 
 Causes an build failure if a rule with the specified severity is violated.
 
 *User property*: `blimp.lint.failOnSeverity`
+
+##### lintDatabase
+
+Verifies the changelogs only for the specified database; if this configuration is missing, all changelogs specified by the `<databases/>` configuration are checked.
+
+If the changelogs are not database dependent, specify one of the supported databases here to avoid running lint for each database.
+
+*User property*: `blimp.lint.database`
+
+##### lintProperties
+
+Specifies a map of properties you want to pass to Liquibase.
+
+*User property*: `blimp.lint.properties`
 
 ##### reportFile
 
@@ -268,12 +292,6 @@ The location of the lint report file.
 *Required*: Yes
 
 *Default*: `${project.reporting.outputDirectory}/blimp.csv`
-
-##### lintProperties
-
-Specifies a map of properties you want to pass to Liquibase.
-
-*User property*: `blimp.lint.properties`
 
 ##### rules
 
@@ -340,7 +358,7 @@ Whether to add the SQL scripts as a test resource of the project.
 
 ##### databases
 
-The list of the databases for which to generate the SQL scripts.
+The database list for which SQL scripts are generated.
 
 *Default*: `mysql`
 
@@ -414,7 +432,7 @@ The following placeholders are available:
 
 - `database`: the database type
 - `group`: the name of the group for which the goal generates the SQL script.
-- `service`: the service name taken from the [serviceName](#serviceName-1) parameter.
+- `service`: the service name taken from the [serviceName](#serviceName-2) parameter.
 
 The group name of the creation script is `create`.
 

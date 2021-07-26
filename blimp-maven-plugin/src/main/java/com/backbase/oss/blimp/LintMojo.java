@@ -1,6 +1,8 @@
 package com.backbase.oss.blimp;
 
 import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
+import static liquibase.util.StringUtils.trimToNull;
 
 import com.backbase.oss.blimp.core.LiquibaseEngine;
 import com.backbase.oss.blimp.core.LiquibaseEngine.LiquibaseEngineBuilder;
@@ -17,6 +19,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 import liquibase.resource.FileSystemResourceAccessor;
@@ -45,6 +48,12 @@ public class LintMojo extends MojoBase {
     private String changeLogFile;
 
     /**
+     * The database list for which changelogs are checked.
+     */
+    @Parameter(property = "blimp.databases", defaultValue = "mysql", required = true)
+    private List<String> databases;
+
+    /**
      * The base directory of the <i>changelog</i> files.
      */
     @Parameter(property = "blimp.changeLogDirectory", required = true,
@@ -65,9 +74,19 @@ public class LintMojo extends MojoBase {
     private File reportFile;
 
     /**
+     * Verifies the changelogs only for the specified database; if this configuration is missing, all
+     * changelogs specified by &lt;databases/&gt; are checked.
+     * <p>
+     * If the changelogs are not database dependent, specify one of the supported databases here.
+     * </p>
+     */
+    @Parameter(property = "blimp.lint.database", required = false)
+    private String lintDatabase;
+
+    /**
      * Specifies a map of properties you want to pass to Liquibase.
      */
-    @Parameter(property = "blimp.lint.roperties")
+    @Parameter(property = "blimp.lint.properties")
     private PropertiesConfigProvider lintProperties;
 
     /**
@@ -117,7 +136,16 @@ public class LintMojo extends MojoBase {
             builder.configProvider(cvp);
         }
 
-        final List<LintRuleViolation> violations = builder.build().visit(new BlimpLinter());
+        final BlimpLinter linter = new BlimpLinter();
+        final List<String> dbs = ofNullable(trimToNull(this.lintDatabase))
+            .map(Collections::singletonList)
+            .orElse(this.databases);
+
+        for (final String db : dbs) {
+            builder.build().toBuilder().database(db).build().visit(linter);
+        }
+
+        final List<LintRuleViolation> violations = linter.getResult();
 
         if (violations.isEmpty()) {
             return;
@@ -131,7 +159,7 @@ public class LintMojo extends MojoBase {
             .get();
 
         try (PrintWriter out = new PrintWriter(this.reportFile)) {
-            out.println("id,rule,property,severity,message");
+            out.println("database,id,rule,property,severity,message");
 
             log(severity, "Found rule violations in " + this.changeLogFile);
             if (rulesURL != null) {
@@ -139,10 +167,11 @@ public class LintMojo extends MojoBase {
             }
 
             for (final LintRuleViolation vio : violations) {
-                out.printf("%s,%s,%s,%s,\"%s\"\n",
-                    vio.getId(), vio.getRule(), vio.getProperty(), vio.getSeverity(), vio.getMessage());
+                out.printf("%s,%s,%s,%s,%s,\"%s\"\n",
+                    vio.getDatabase(), vio.getId(), vio.getRule(), vio.getProperty(), vio.getSeverity(),
+                    vio.getMessage());
 
-                log(vio.getSeverity(), "%10s: %s", vio.getId(), vio.getMessage());
+                log(vio.getSeverity(), "%s(%s): %s", vio.getDatabase(), vio.getId(), vio.getMessage());
             }
         }
 

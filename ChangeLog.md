@@ -1,20 +1,24 @@
 
+# release-0.16.2
+
+* Extended Blimp linter to support `dbms` selectors
+
 # release-0.16.0
 
-* **added changelog linter**
-* **added SQL formatter**
+* Added changelog linter
+* Added SQL formatter
 
 # release-0.15.3
 
-* **Workaround to ClassCastException thrown by Liquibase**
+* Workaround to ClassCastException thrown by Liquibase
 
 # release-0.15.1
 
-* **Added [withInitialVersion](README.md#withInitialVersion) mojo parameter**
+* Added [withInitialVersion](README.md#withInitialVersion-1) mojo parameter
   * defaults to `false`, so the script of the initial version is not generated
 
 # release-0.15.0
 
-* **Added [stripComments](README.md#stripComments) mojo parameter**
-  * defaults to false to avoid conflicts with other ways of stripping comments (like antrun)
+* Added [stripComments](README.md#stripComments) mojo parameter
+  * defaults to `false` to avoid conflicts with other ways of stripping comments (like `antrun`)
   * set to `true` and remove `antrun`

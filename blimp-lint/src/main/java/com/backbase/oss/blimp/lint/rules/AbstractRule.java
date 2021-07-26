@@ -68,10 +68,12 @@ public abstract class AbstractRule<C extends AbstractRuleConfiguration> implemen
                 .flatMap(ch -> validate(cf, ch)));
         }
 
-        return builders.stream().flatMap(UnaryOperator.identity())
+        return builders.stream()
+            .flatMap(UnaryOperator.identity())
             .map(b -> b.id(ofNullable(cs).map(ChangeSet::getId).orElse("<" + this.name + ">")))
             .map(b -> b.rule(getName()))
             .map(b -> b.severity(cf.getSeverity()))
+            .map(b -> b.database(cl.getRuntimeEnvironment().getTargetDatabase().getShortName()))
             .map(LintRuleViolation.Builder::build)
             .collect(toList());
     }

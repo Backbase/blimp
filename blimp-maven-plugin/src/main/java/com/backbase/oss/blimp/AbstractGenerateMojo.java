@@ -74,7 +74,7 @@ public abstract class AbstractGenerateMojo extends MojoBase {
     private boolean stripComments;
 
     /**
-     * The list of the databases for which to generate the SQL scripts.
+     * The database list for which SQL scripts are generated.
      */
     @Parameter(property = "blimp.databases", defaultValue = "mysql", required = true)
     private List<String> databases;
