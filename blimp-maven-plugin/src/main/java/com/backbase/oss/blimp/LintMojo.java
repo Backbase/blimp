@@ -14,16 +14,10 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
 import liquibase.resource.FileSystemResourceAccessor;
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -37,11 +31,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 public class LintMojo extends MojoBase {
 
     /**
-     * The location of the <i>changelog</i> to execute.
-     * <p>
-     * Usually a file name relative to the input directory but it can also point to a classpath
-     * resource.
-     * </p>
+     * The path of changelog file relative to the input directory.
      */
     @Parameter(property = "blimp.changeLogFile", required = true,
         defaultValue = "db.changelog-main.xml")
@@ -112,7 +102,6 @@ public class LintMojo extends MojoBase {
 
         final LiquibaseEngineBuilder<?, ?> builder = LiquibaseEngine.builder()
             .changeLogFile(this.changeLogFile)
-            .classLoader(classLoader())
             .accessor(new FileSystemResourceAccessor(this.changeLogDirectory.getPath()))
             .configProvider(this.lintProperties);
 
@@ -187,29 +176,13 @@ public class LintMojo extends MojoBase {
             return rulesFile.toURI().toURL();
         }
 
-        final URL res = classLoader().getResource(this.rules);
+        final URL res = getClass().getClassLoader().getResource(this.rules);
 
         if (res != null) {
             return res;
         }
 
         throw new MojoFailureException("Cannot find rules at location " + this.rules);
-    }
-
-    private ClassLoader classLoader() throws MojoFailureException {
-        try {
-            final Stream<URI> classpath = this.project.getRuntimeClasspathElements().stream()
-                .map(Paths::get)
-                .map(Path::toUri);
-
-            final URL[] urls = Stream.concat(Stream.of(this.changeLogDirectory.toURI()), classpath)
-                .map(MojoBase::toURL)
-                .toArray(URL[]::new);
-
-            return new URLClassLoader(urls, getClass().getClassLoader());
-        } catch (final DependencyResolutionRequiredException e) {
-            throw new MojoFailureException("Cannot construct Liquibase classpath", e);
-        }
     }
 
     private void log(LintRuleSeverity sev, String format, Object... objects) {
@@ -231,5 +204,3 @@ public class LintMojo extends MojoBase {
         }
     }
 }
-
-
