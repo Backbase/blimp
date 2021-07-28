@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.backbase.oss</groupId>
         <artifactId>blimp</artifactId>
-        <version>0.16.3</version>
+        <version>0.16.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>blimp-lint</artifactId>
