@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.backbase.oss</groupId>
         <artifactId>blimp</artifactId>
-        <version>0.16.4</version>
+        <version>0.16.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>blimp-maven-plugin</artifactId>
