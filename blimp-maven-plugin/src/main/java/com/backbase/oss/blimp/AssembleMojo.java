@@ -2,6 +2,7 @@ package com.backbase.oss.blimp;
 
 import static java.util.Optional.ofNullable;
 
+import com.backbase.oss.blimp.file.NonEmptyFileSelector;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -12,10 +13,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.ArchiverException;
-import org.codehaus.plexus.archiver.FileSet;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 import org.codehaus.plexus.archiver.util.DefaultFileSet;
+import org.codehaus.plexus.components.io.fileselectors.FileSelector;
 
 /**
  * Creates an archive containing the generated SQL files.
@@ -81,11 +82,12 @@ public class AssembleMojo extends MojoBase {
             + "." + format;
         final File archive = new File(this.project.getBuild().getDirectory(), archiveName);
         final Archiver archiver = this.archiverManager.getArchiver(archive);
-        final FileSet fileSet = DefaultFileSet
+        final DefaultFileSet fileSet = DefaultFileSet
             .fileSet(this.scriptsDirectory)
             .prefixed(this.serviceName + "/")
             .include(new String[] {SQL_FILES})
             .includeEmptyDirs(false);
+        fileSet.setFileSelectors(new FileSelector[] { new NonEmptyFileSelector() });
 
         archiver.setDestFile(archive);
         archiver.addFileSet(fileSet);
