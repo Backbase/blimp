@@ -61,7 +61,7 @@ class BlimpFormatterTest {
     }
 
     @Test
-    void formatterDisabled() throws Exception {
+    void blimpDisabled() throws Exception {
         LiquibaseConfiguration.getInstance().getConfiguration(FormatterConfiguration.class)
             .setValue(AbstractBlimpConfiguration.ENABLED, false);
 
@@ -72,6 +72,21 @@ class BlimpFormatterTest {
         }
 
         assertThat(this.output.toString()).doesNotContain(this.expected);
+    }
+
+    @Test
+    void blimpFormattingDisabled() throws Exception {
+        LiquibaseConfiguration.getInstance().getConfiguration(FormatterConfiguration.class)
+            .setValue(AbstractBlimpConfiguration.BLIMP_FORMATTING_DISABLED, true);
+
+        try (final Liquibase liquibase = new Liquibase("product-db/changelog/db.changelog-persistence.xml",
+            this.accessor, this.database)) {
+
+            liquibase.update("", new Contexts(""), new LabelExpression(""), this.output);
+        }
+        String expected = IOUtils.toString(
+            getClass().getResourceAsStream("/generate/expected_without_blimp_formatting.sql"));
+        assertThat(this.output.toString()).contains(expected);
     }
 
     @Test

@@ -5,6 +5,7 @@ import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 
 import com.backbase.oss.blimp.core.PropertiesConfigProvider;
+import com.backbase.oss.blimp.format.FormatterConfiguration;
 import com.backbase.oss.blimp.liquibase.LiquibaseGenerator;
 import com.backbase.oss.blimp.liquibase.LiquibaseGenerator.LiquibaseGeneratorBuilder;
 import java.io.File;
@@ -120,6 +121,12 @@ public abstract class AbstractGenerateMojo extends MojoBase {
         required = true, readonly = true)
     private File cacheDirectory;
 
+    /**
+     * The configuration which is used to show that no formatting is needed.
+     */
+    @Parameter(property = "blimp.blimpFormattingDisabled", defaultValue = "false")
+    private boolean blimpFormattingDisabled;
+
     @Override
     protected void doExecute() throws Exception {
         LogService.setLoggerFactory(new MavenLoggerFactory(getLog()));
@@ -179,6 +186,8 @@ public abstract class AbstractGenerateMojo extends MojoBase {
         }
 
         addOutputResource();
+
+        FormatterConfiguration.setBlimpFormattingDisabled(blimpFormattingDisabled);
 
         return engine.toBuilder()
             .strategy(gv.getStrategy())

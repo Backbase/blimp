@@ -6,6 +6,7 @@ import liquibase.configuration.AbstractConfigurationContainer;
 
 public abstract class AbstractBlimpConfiguration extends AbstractConfigurationContainer {
     public static final String ENABLED = "enabled";
+    public static final String BLIMP_FORMATTING_DISABLED = "blimp_formatting_disabled";
     public static final String PRIORITY = "priority";
 
     protected final String name;
@@ -28,6 +29,13 @@ public abstract class AbstractBlimpConfiguration extends AbstractConfigurationCo
             .addProperty(PRIORITY, Integer.class)
             .setDescription(format("The priority of %s", this.name))
             .setDefaultValue(priority);
+    }
+
+    protected void addBlimpFormattingDisabled(boolean formattingEnabled) {
+        getContainer()
+            .addProperty(BLIMP_FORMATTING_DISABLED, Boolean.class)
+            .setDescription(format("Blimp formatting disabled/enabled for %s", this.name))
+            .setDefaultValue(formattingEnabled);
     }
 
     public boolean isEnabled() {

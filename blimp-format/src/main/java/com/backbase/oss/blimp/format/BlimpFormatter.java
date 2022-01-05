@@ -1,6 +1,7 @@
 package com.backbase.oss.blimp.format;
 
 
+import static com.backbase.oss.blimp.core.AbstractBlimpConfiguration.BLIMP_FORMATTING_DISABLED;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
@@ -35,8 +36,10 @@ public class BlimpFormatter extends AbstractSqlGenerator {
 
     @Override
     public Sql[] generateSql(SqlStatement statement, Database database, SqlGeneratorChain sqlGeneratorChain) {
+        boolean blimpFormattingDisabled = getConfiguration().getProperty(BLIMP_FORMATTING_DISABLED)
+            .getValue(Boolean.class);
         return stream(sqlGeneratorChain.generateSql(statement, database))
-            .map(this::formatSQL)
+            .map(s -> blimpFormattingDisabled ? s : formatSQL(s))
             .toArray(Sql[]::new);
     }
 

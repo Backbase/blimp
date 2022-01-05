@@ -492,6 +492,14 @@ the initial version, so only the upgrade scripts should be generated.
 
 *User property*: `blimp.withInitialVersion`
 
+##### blimpFormattingDisabled
+
+Generates the scripts without the formatting which blimp provides.
+
+*Default*: `false`
+
+*User property*: `blimp.blimpFormattingDisabled`
+
 ### Full Configuration with default values
 
 ```xml
@@ -525,6 +533,7 @@ the initial version, so only the upgrade scripts should be generated.
                 <testChangeLogDirectory>${project.basedir}/src/test/resources</testChangeLogDirectory>
                 <testScriptsDirectory>${project.build.directory}/generated-test-resources/blimp</testScriptsDirectory>
                 <withInitialVersion>false</withInitialVersion>
+                <blimpFormattingDisabled>true</blimpFormattingDisabled>
             </configuration>
         </execution>
     </executions>
