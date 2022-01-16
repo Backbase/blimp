@@ -13,7 +13,6 @@ import liquibase.logging.Logger;
 import liquibase.sql.Sql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.statement.SqlStatement;
-import liquibase.statement.core.InsertSetStatement;
 import liquibase.statement.core.InsertStatement;
 import liquibase.statement.core.RawSqlStatement;
 
@@ -24,7 +23,6 @@ public class BlimpFormatter extends AbstractSqlGenerator {
     private static final Logger LOG = LogService.getLog(BlimpFormatter.class);
     private static final List<Class<? extends SqlStatement>> UNSUPPORTED = asList(
         InsertStatement.class,
-        InsertSetStatement.class,
         RawSqlStatement.class);
 
     public BlimpFormatter() {

@@ -2,6 +2,7 @@ package com.backbase.oss.blimp.format;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import com.backbase.oss.blimp.core.AbstractBlimpConfiguration;
 import com.backbase.oss.blimp.core.NormalizedResourceAccessor;
@@ -114,8 +115,14 @@ class BlimpFormatterTest {
 
         LOG.info("output is\n{}", this.output);
 
-        assertThat(this.output.toString())
-            .contains(loadResource(format("main-with-details/%s-%sformatted.sql", label, formatted ? "" : "un")));
+        final String fmt = formatted ? "formatted" : "unformatted";
+        final String sql = this.output.toString();
+
+        assertAll(
+            () -> assertThat(sql).as("foreign key")
+                .contains(loadResource(format("main-with-details/%s-%s.sql", label, fmt))),
+            () -> assertThat(sql).as("insert")
+                .contains(loadResource(format("main-with-details/insert-%s.sql", fmt))));
     }
 
 }

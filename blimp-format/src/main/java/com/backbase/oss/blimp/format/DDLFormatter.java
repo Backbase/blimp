@@ -1,5 +1,8 @@
 package com.backbase.oss.blimp.format;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.joining;
+
 import java.util.Locale;
 import java.util.StringTokenizer;
 import liquibase.util.StreamUtil;
@@ -70,8 +73,38 @@ final class DDLFormatter {
         if (start.startsWith("comment on")) {
             return formatCommentOn(sql);
         }
+        if (start.startsWith("insert into")) {
+            return formatInsertInto(sql);
+        }
 
         return INITIAL_LINE + sql;
+    }
+
+    private String formatInsertInto(String sql) {
+        final StringBuilder result = new StringBuilder(60).append(INITIAL_LINE);
+        final StringTokenizer tokens = new StringTokenizer(sql, " ()'[]\"", true);
+
+        int depth = 0;
+        boolean quoted = false;
+        while (tokens.hasMoreTokens()) {
+            final String token = tokens.nextToken();
+
+            quoted = isQuote(token) ? !quoted : quoted;
+
+            if ("(".equals(token) && !quoted && ++depth == 1) {
+                result.append(INDENT_LINE);
+            }
+            if (")".equals(token) && !quoted) {
+                --depth;
+            }
+            if ("values".equalsIgnoreCase(token) && !quoted) {
+                result.append(StreamUtil.getLineSeparator());
+            }
+
+            result.append(token);
+        }
+
+        return align(result);
     }
 
     private String formatCommentOn(String sql) {
@@ -140,6 +173,26 @@ final class DDLFormatter {
     }
 
     private String align(StringBuilder sb) {
-        return sb.toString().replace("\1 ", "    ").replace("\1", "    ");
+        return stream(sb.toString().split("\n"))
+            .map(DDLFormatter::trim)
+            .map(s -> s.replace("\1 ", "    "))
+            .map(s -> s.replace("\1", "    "))
+            .collect(joining("\n"));
+    }
+
+    static String trim(String s) {
+        final StringBuilder b = new StringBuilder(s);
+
+        while (b.length() > 0 && b.charAt(0) == ' ') {
+            b.deleteCharAt(0);
+        }
+
+        int z;
+
+        while ((z = b.length()) > 0 && b.charAt(z - 1) == ' ') {
+            b.deleteCharAt(z - 1);
+        }
+
+        return b.toString();
     }
 }

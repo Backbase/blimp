@@ -1,4 +1,13 @@
 
+# release-0.16.5
+
+* Don't insert empty lines in formatted SQL statements
+* Format INSERT INTO statements
+
+# release-0.16.4
+
+* Don't add empty files to generated assembly
+
 # release-0.16.3
 
 * Clarified the meaning of the [changeLogFile](README.md#changelogfile-1) parameter of `blimp:lint`
