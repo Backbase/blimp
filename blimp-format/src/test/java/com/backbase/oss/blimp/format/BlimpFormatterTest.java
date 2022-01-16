@@ -1,9 +1,11 @@
 package com.backbase.oss.blimp.format;
 
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.backbase.oss.blimp.core.AbstractBlimpConfiguration;
 import com.backbase.oss.blimp.core.NormalizedResourceAccessor;
+import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,17 +18,33 @@ import liquibase.database.DatabaseFactory;
 import liquibase.resource.ResourceAccessor;
 import liquibase.servicelocator.ServiceLocator;
 import liquibase.sqlgenerator.SqlGeneratorFactory;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
+@Slf4j
 class BlimpFormatterTest {
 
     private final ResourceAccessor accessor = new NormalizedResourceAccessor();
     private final StringWriter output = new StringWriter();
-
     private Database database;
-    private String expected;
+
+    @SneakyThrows
+    static String loadResource(String resource) {
+        if (!resource.startsWith("/")) {
+            resource = "/" + resource;
+        }
+
+        try (InputStream is = BlimpFormatterTest.class.getResourceAsStream(resource)) {
+            assertThat(is).as(resource).isNotNull();
+
+            return IOUtils.toString(is);
+        }
+    }
 
     @BeforeEach
     void setUp() throws Exception {
@@ -34,6 +52,7 @@ class BlimpFormatterTest {
 
         changeLogFile.toFile().deleteOnExit();
 
+        LiquibaseConfiguration.getInstance().reset();
         ServiceLocator.getInstance()
             .addPackageToScan(getClass().getPackage().getName());
 
@@ -41,13 +60,11 @@ class BlimpFormatterTest {
             "offline:mysql?outputLiquibaseSql=none&changeLogFile=" + changeLogFile,
             "", "", "", "", "", "", this.accessor);
 
-        this.expected = IOUtils.toString(getClass().getResourceAsStream("/generate/expected.sql"));
-
         SqlGeneratorFactory.reset();
     }
 
     @Test
-    void formatSQL() throws Exception {
+    void formatedSQL() throws Exception {
         LiquibaseConfiguration.getInstance().getConfiguration(FormatterConfiguration.class)
             .setValue(AbstractBlimpConfiguration.ENABLED, true);
 
@@ -57,11 +74,13 @@ class BlimpFormatterTest {
             liquibase.update("", new Contexts(""), new LabelExpression(""), this.output);
         }
 
-        assertThat(this.output.toString()).contains(this.expected);
+        LOG.info("output is\n{}", this.output);
+
+        assertThat(this.output.toString()).contains(loadResource("product-db/formatted.sql"));
     }
 
     @Test
-    void formatterDisabled() throws Exception {
+    void unformatedSQL() throws Exception {
         LiquibaseConfiguration.getInstance().getConfiguration(FormatterConfiguration.class)
             .setValue(AbstractBlimpConfiguration.ENABLED, false);
 
@@ -71,23 +90,32 @@ class BlimpFormatterTest {
             liquibase.update("", new Contexts(""), new LabelExpression(""), this.output);
         }
 
-        assertThat(this.output.toString()).doesNotContain(this.expected);
+        LOG.info("output is\n{}", this.output);
+
+        assertThat(this.output.toString()).contains(loadResource("product-db/unformatted.sql"));
     }
 
-    @Test
-    void loadData() throws Exception {
+    @ParameterizedTest
+    @CsvSource({
+        "with-details-1,true",
+        "with-details-1,false",
+        "with-details-2,true",
+        "with-details-2,false",
+    })
+    void mainWithDetails(String label, boolean formatted) throws Exception {
         LiquibaseConfiguration.getInstance().getConfiguration(FormatterConfiguration.class)
-            .setValue(AbstractBlimpConfiguration.ENABLED, true);
+            .setValue(AbstractBlimpConfiguration.ENABLED, formatted);
 
-        try (final Liquibase liquibase = new Liquibase("load-data/db.changelog-main.xml",
+        try (final Liquibase liquibase = new Liquibase("main-with-details/db.changelog-main.xml",
             this.accessor, this.database)) {
 
-            liquibase.update("", new Contexts(""), new LabelExpression(""), this.output);
+            liquibase.update("", new Contexts(""), new LabelExpression(label), this.output);
         }
 
-        assertThat(this.output.toString()).doesNotContain(this.expected);
+        LOG.info("output is\n{}", this.output);
+
+        assertThat(this.output.toString())
+            .contains(loadResource(format("main-with-details/%s-%sformatted.sql", label, formatted ? "" : "un")));
     }
 
 }
-
-

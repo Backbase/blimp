@@ -3,15 +3,17 @@ package com.backbase.oss.blimp.format;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import liquibase.util.StreamUtil;
+import liquibase.util.StringUtils;
 
 /**
- * Formatter that modifies SQL string.
+ * Formatter that modifies SQL string. Code borrowed from
+ * {@link org.hibernate.engine.jdbc.internal.DDLFormatterImpl}.
  */
 final class DDLFormatter {
 
     public static final DDLFormatter INSTANCE = new DDLFormatter();
     private static final String INITIAL_LINE = StreamUtil.getLineSeparator() + "";
-    private static final String OTHER_LINES = StreamUtil.getLineSeparator() + "   ";
+    private static final String INDENT_LINE = StreamUtil.getLineSeparator() + "\1";
 
     private static boolean isBreak(String token) {
         switch (token.toLowerCase()) {
@@ -54,20 +56,22 @@ final class DDLFormatter {
             return sql;
         }
 
-        if (sql.toLowerCase(Locale.ROOT).startsWith("create table")) {
+        final String start = StringUtils.substring(sql, 0, 16).toLowerCase(Locale.ROOT);
+
+        if (start.startsWith("create table")) {
             return formatCreateTable(sql);
         }
-        if (sql.toLowerCase(Locale.ROOT).startsWith("create")) {
+        if (start.startsWith("create")) {
             return sql;
         }
-        if (sql.toLowerCase(Locale.ROOT).startsWith("alter table")) {
+        if (start.startsWith("alter table")) {
             return formatAlterTable(sql);
         }
-        if (sql.toLowerCase(Locale.ROOT).startsWith("comment on")) {
+        if (start.startsWith("comment on")) {
             return formatCommentOn(sql);
-        } else {
-            return INITIAL_LINE + sql;
         }
+
+        return INITIAL_LINE + sql;
     }
 
     private String formatCommentOn(String sql) {
@@ -81,11 +85,11 @@ final class DDLFormatter {
             if (isQuote(token)) {
                 quoted = !quoted;
             } else if (!quoted && "is".equalsIgnoreCase(token)) {
-                result.append(OTHER_LINES);
+                result.append(INDENT_LINE);
             }
         }
 
-        return result.toString();
+        return align(result);
     }
 
     private String formatAlterTable(String sql) {
@@ -98,12 +102,12 @@ final class DDLFormatter {
             if (isQuote(token)) {
                 quoted = !quoted;
             } else if (!quoted && isBreak(token)) {
-                result.append(OTHER_LINES);
+                result.append(INDENT_LINE);
             }
             result.append(token);
         }
 
-        return result.toString();
+        return align(result);
     }
 
     private String formatCreateTable(String sql) {
@@ -124,14 +128,18 @@ final class DDLFormatter {
             result.append(token);
 
             if (",".equals(token) && !quoted && depth == 1) {
-                result.append(OTHER_LINES);
+                result.append(INDENT_LINE);
             }
 
             if ("(".equals(token) && !quoted && ++depth == 1) {
-                result.append(OTHER_LINES);
+                result.append(INDENT_LINE);
             }
         }
 
-        return result.toString();
+        return align(result);
+    }
+
+    private String align(StringBuilder sb) {
+        return sb.toString().replace("\1 ", "    ").replace("\1", "    ");
     }
 }

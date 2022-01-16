@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+    <changeSet author="backbase" id="0100-010">
+        <comment>create the main table</comment>
+        <createTable remarks="Table to store main data" tableName="main">
+            <column name="id" type="VARCHAR(50)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_main" />
+            </column>
+            <column name="notes" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="backbase" id="0100-020">
+        <loadData tableName="main" file="main-table.csv" relativeToChangelogFile="true">
+            <column name="id" type="STRING" />
+            <column name="notes" type="STRING" />
+        </loadData>
+        <comment>add data</comment>
+    </changeSet>
+
+    <changeSet author="backbase" id="0100-030">
+        <comment>create the details table</comment>
+        <createTable remarks="Table to store details data" tableName="details">
+            <column name="id" type="VARCHAR(50)">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_details" />
+            </column>
+            <column name="details" type="VARCHAR(255)">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

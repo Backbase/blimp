@@ -3,7 +3,8 @@ package com.backbase.oss.blimp;
 import static com.backbase.oss.blimp.TestUtils.installedArchive;
 import static com.soebes.itf.extension.assertj.MavenITAssertions.assertThat;
 import static com.soebes.itf.jupiter.extension.MavenCLIOptions.BATCH_MODE;
-import static com.soebes.itf.jupiter.extension.MavenCLIOptions.*;
+import static com.soebes.itf.jupiter.extension.MavenCLIOptions.FAIL_AT_END;
+import static com.soebes.itf.jupiter.extension.MavenCLIOptions.SETTINGS;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -91,7 +92,7 @@ class BlimpIT {
         target.withFile("generated-resources/blimp/mysql/create/format-sql.sql")
             .satisfies(file -> {
                 assertThat(Files.contentOf(file, StandardCharsets.UTF_8))
-                    .contains("\nCREATE TABLE product (\n   id");
+                    .contains("\nCREATE TABLE product (\n    id");
                 assertThat(Files.contentOf(file, StandardCharsets.UTF_8))
                     .doesNotMatch(".*--\\s+\\*+.*");
             });

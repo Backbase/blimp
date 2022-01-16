@@ -26,8 +26,8 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 @MavenOption(FAIL_AT_END)
 @MavenOption(SETTINGS)
 @MavenOption("settings.xml")
-@MavenOption("-Dproducts.version=1.4.17")
-@MavenOption("-Dblimp-lint-rules.version=0.1.0-SNAPSHOT")
+@MavenOption("-Dproducts.version=1.7.21")
+@MavenOption("-Dblimp-lint-rules.version=0.1.0")
 @MavenRepository
 @EnabledIfSystemProperty(named = "blimp-internal-test", matches = "^true$")
 class BackbaseIT {
@@ -71,9 +71,7 @@ class BackbaseIT {
 
         target.withFile("generated-resources/blimp/mysql/create/products-directory.sql")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/blimp/mysql/create_2_19_0/products-directory.sql")
-            .doesNotExist();
-        target.withFile("generated-resources/blimp/mysql/upgrade_2_20_5_to_2_21_0/products-directory.sql")
+        target.withFile("generated-resources/blimp/mysql/upgrade_2021_09_to_2021_11/products-directory.sql")
             .exists().isNotEmpty();
     }
 
@@ -85,9 +83,7 @@ class BackbaseIT {
 
         target.withFile("generated-resources/blimp/mysql/create/products-classpath.sql")
             .exists().isNotEmpty();
-        target.withFile("generated-resources/blimp/mysql/create_2_19_0/products-classpath.sql")
-            .doesNotExist();
-        target.withFile("generated-resources/blimp/mysql/upgrade_2_20_5_to_2_21_0/products-classpath.sql")
+        target.withFile("generated-resources/blimp/mysql/upgrade_2021_09_to_2021_11/products-classpath.sql")
             .exists().isNotEmpty();
     }
 }

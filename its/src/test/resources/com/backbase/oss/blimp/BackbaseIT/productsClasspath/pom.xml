@@ -20,7 +20,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <changeLogFile>db.changelog-persistence.xml</changeLogFile>
+                            <changeLogFile>db/changelog/db.changelog-persistence.xml</changeLogFile>
                             <databases>
                                 <database>mysql</database>
                             </databases>

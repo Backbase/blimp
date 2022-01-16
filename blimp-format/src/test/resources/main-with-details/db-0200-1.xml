@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+    <changeSet author="backbase" id="v0200-1-010">
+        <comment>add details id column to main table</comment>
+        <addColumn tableName="main">
+            <column name="details_id" type="VARCHAR(50)" remarks="reference to the details table (case 1)" />
+        </addColumn>
+    </changeSet>
+
+    <changeSet author="backbase" id="v0200-1-020">
+        <comment>add foreign key constraint to reference details table id column (case 1)</comment>
+        <addForeignKeyConstraint baseColumnNames="details_id" baseTableName="main"
+            remarks="reference constraint to the details table (case 1)" constraintName="fk_main_2_details"
+            referencedTableName="details" referencedColumnNames="id" validate="true" />
+    </changeSet>
+
+</databaseChangeLog>

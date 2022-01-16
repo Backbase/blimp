@@ -4,20 +4,18 @@ package com.backbase.oss.blimp.format;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
+
 import com.backbase.oss.blimp.core.AbstractSqlGenerator;
 import java.util.List;
 import liquibase.database.Database;
 import liquibase.logging.LogService;
 import liquibase.logging.Logger;
-import liquibase.sql.CallableSql;
 import liquibase.sql.Sql;
-import liquibase.sql.UnparsedSql;
 import liquibase.sqlgenerator.SqlGeneratorChain;
 import liquibase.statement.SqlStatement;
-import liquibase.statement.core.InsertStatement;
 import liquibase.statement.core.InsertSetStatement;
+import liquibase.statement.core.InsertStatement;
 import liquibase.statement.core.RawSqlStatement;
-import liquibase.structure.DatabaseObject;
 
 /**
  * The formatter implemented as an SQL generator.
@@ -51,23 +49,19 @@ public class BlimpFormatter extends AbstractSqlGenerator {
     }
 
     private Sql formatSQL(Sql sql) {
+        if (sql instanceof FormattedSql) {
+            return sql;
+        }
+
         LOG.debug(format("Formatting SQL: %s", sql));
 
         final String formatted = apply(sql.toSql());
 
-        if (sql instanceof CallableSql) {
-            sql = new CallableSql(formatted, ((CallableSql) sql).getExpectedStatus());
-        }
-        if (sql instanceof UnparsedSql) {
-            sql = new UnparsedSql(formatted, sql.getEndDelimiter(),
-                sql.getAffectedDatabaseObjects().toArray(new DatabaseObject[0]));
-        }
-
-        return sql;
+        return new FormattedSql(formatted, sql.getEndDelimiter(), sql.getAffectedDatabaseObjects());
     }
 
     private String apply(String statement) {
-        return DDLFormatter.INSTANCE.format(statement);
+        return DDLFormatter.INSTANCE.format(statement.trim()).trim();
     }
 }
 
