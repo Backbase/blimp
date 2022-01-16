@@ -5,7 +5,7 @@
 
     <groupId>com.backbase.oss</groupId>
     <artifactId>blimp</artifactId>
-    <version>0.16.5-SNAPSHOT</version>
+    <version>0.16.5</version>
     <packaging>pom</packaging>
 
     <description>Backbase Liquibase Integration Maven Plugin</description>
@@ -45,7 +45,7 @@
         <url>https://github.com/Backbase/blimp</url>
         <connection>https://github.com/Backbase/blimp.git</connection>
         <developerConnection>${developerConnection}</developerConnection>
-        <tag>HEAD</tag>
+        <tag>release-0.16.5</tag>
     </scm>
 
     <properties>
