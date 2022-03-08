@@ -58,7 +58,7 @@
         <groovy.version>3.0.9</groovy.version>
         <itf.jupiter.version>0.11.0</itf.jupiter.version>
         <junit.version>5.7.2</junit.version>
-        <liquibase3.version>3.10.3</liquibase3.version>
+        <liquibase3.version>4.8.0</liquibase3.version>
         <liquibase4.version>4.1.1</liquibase4.version>
         <lombok.version>1.18.20</lombok.version>
         <lombok-maven-plugin.version>${lombok.version}.0</lombok-maven-plugin.version>
