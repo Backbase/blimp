@@ -5,7 +5,7 @@
 
     <groupId>com.backbase.oss</groupId>
     <artifactId>blimp</artifactId>
-    <version>0.16.6-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <description>Backbase Liquibase Integration Maven Plugin</description>
@@ -17,7 +17,7 @@
             <name>Pappy - Răzvan STĂNESCU</name>
             <organization>Backbase</organization>
             <organizationUrl>https://www.backbase.com</organizationUrl>
-            <email>razvans@backbase.com</email>
+            <email>pa314159@users.noreply.github.com</email>
         </developer>
     </developers>
 
@@ -51,17 +51,17 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <forkCount>1C</forkCount>
 
-        <groovy.version>3.0.9</groovy.version>
+        <groovy.version>3.0.11</groovy.version>
         <itf.jupiter.version>0.11.0</itf.jupiter.version>
         <junit.version>5.7.2</junit.version>
         <liquibase3.version>3.10.3</liquibase3.version>
-        <liquibase4.version>4.1.1</liquibase4.version>
-        <lombok.version>1.18.20</lombok.version>
-        <lombok-maven-plugin.version>${lombok.version}.0</lombok-maven-plugin.version>
+        <liquibase4.version>4.5.0</liquibase4.version><!-- SSDK 14 -->
+        <lombok.version>1.18.24</lombok.version>
+        <lombok-maven-plugin.version>1.18.20.0</lombok-maven-plugin.version>
         <maven.libs.version>3.6.0</maven.libs.version>
     </properties>
 
@@ -82,17 +82,17 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.1.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
                     <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.3.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.0.2</version>
+                    <version>3.2.0</version>
                     <configuration>
                         <escapeString>!</escapeString>
                     </configuration>
@@ -100,27 +100,27 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.0</version>
+                    <version>3.10.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.2.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.4.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-plugin-plugin</artifactId>
-                    <version>3.6.0</version>
+                    <version>3.6.4</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.22.1</version>
+                    <version>3.0.0-M7</version>
                     <configuration>
                         <skip>${skip.unit.tests}</skip>
                     </configuration>
@@ -128,7 +128,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.22.1</version>
+                    <version>3.0.0-M7</version>
                     <configuration>
                         <skip>${skip.integration.tests}</skip>
                     </configuration>
@@ -136,12 +136,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.0.2</version>
+                    <version>3.2.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
-                    <version>2.5.2</version>
+                    <version>3.0.0-M1</version>
                     <configuration>
                         <installAtEnd>false</installAtEnd>
                     </configuration>
@@ -149,7 +149,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
+                    <version>3.0.0-M2</version>
                     <configuration>
                         <deployAtEnd>true</deployAtEnd>
                     </configuration>
@@ -157,12 +157,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.0-M4</version>
+                    <version>3.0.0-M6</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.gmavenplus</groupId>
                     <artifactId>gmavenplus-plugin</artifactId>
-                    <version>1.12.1</version>
+                    <version>1.13.1</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.codehaus.groovy</groupId>
@@ -184,7 +184,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
+                    <version>3.0.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.projectlombok</groupId>
@@ -194,7 +194,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.2.2</version>
+                    <version>1.2.7</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -319,12 +319,12 @@
             <dependency>
                 <groupId>io.leangen.geantyref</groupId>
                 <artifactId>geantyref</artifactId>
-                <version>1.3.11</version>
+                <version>1.3.13</version>
             </dependency>
             <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
-                <version>1.29</version>
+                <version>1.30</version>
             </dependency>
 
             <dependency>
@@ -337,7 +337,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-junit-jupiter</artifactId>
-                <version>2.23.0</version>
+                <version>4.6.1</version>
             </dependency>
 
             <dependency>
@@ -358,7 +358,7 @@
             <dependency>
                 <groupId>org.assertj</groupId>
                 <artifactId>assertj-core</artifactId>
-                <version>3.18.1</version>
+                <version>3.23.1</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
@@ -372,7 +372,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.16</version>
+            <version>${lombok.version}</version>
             <scope>provided</scope>
         </dependency>
 

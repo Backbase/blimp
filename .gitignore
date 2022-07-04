@@ -4,6 +4,7 @@
 target/
 build/
 bin/
+*.jar
 *.iml
 *.tmp
 *.log
